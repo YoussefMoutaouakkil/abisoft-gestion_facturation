@@ -1,0 +1,36 @@
+spring:
+  profiles:
+    active: dev
+  datasource:
+    url: jdbc:mysql://localhost:3306/gestion_facturation?createDatabaseIfNotExist=true&useSSL=false
+    username: root
+    password: 
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    generate-ddl: true
+    defer-datasource-initialization: true
+    hibernate:
+      ddl-auto: create    # Changed from create-drop to create
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+        format_sql: true
+  sql:
+    init:
+      mode: never    # Disable SQL script initialization since we're using DataLoader
+
+javafx:
+  title: Sprint Boot Javafx
+  stage:
+    resizable: true
+  main:
+    tree: true
+    toolbar: true
+    
+logging:
+  level:
+    com.skynet: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg%n"
