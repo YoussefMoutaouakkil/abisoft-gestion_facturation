@@ -8,10 +8,8 @@ import com.skynet.javafx.views.ProductView;
 @Component
 public class ProductGridDef implements FrameGridDef {
 
-    public static String COLUMN_NAMES[] = 
-        { "Id", "Name", "Price", "Category", "Quantity" };
-    public static String COLUMN_DATA_NAMES[] = 
-        { "id", "name", "price", "categoryName", "quantity" };
+    public static String COLUMN_NAMES[] = { "Id", "Name", "Price", "Category", "Quantity" };
+    public static String COLUMN_DATA_NAMES[] = { "id", "name", "price", "categoryName", "quantity" };
     public static Integer COLUMN_SIZES[] = { 40, 200, 100, 150, 100 };
     public static String TITLE_POPUPS = "Product";
 

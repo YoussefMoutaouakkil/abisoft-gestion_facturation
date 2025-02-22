@@ -10,7 +10,7 @@ spring:
     generate-ddl: true
     defer-datasource-initialization: true
     hibernate:
-      ddl-auto: create    # Changed from create-drop to create
+      ddl-auto: create-drop    # Changed from create-drop to create
     database-platform: org.hibernate.dialect.MySQL8Dialect
     show-sql: false
     properties:

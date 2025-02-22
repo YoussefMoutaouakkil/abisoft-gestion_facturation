@@ -1,6 +1,12 @@
 package com.skynet.javafx.model;
 
+import java.util.List;
+import java.util.ArrayList;
+
 import javax.persistence.*;
+
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 
 @Entity
 @Table(name = "products")
@@ -14,21 +20,23 @@ public class Product extends SimpleEntity {
     @Column(nullable = false)
     private Double price;
 
-    @Column
-    private Integer quantity;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "category_id")
     private Category category;
 
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    private List<ProductParameter> parameters = new ArrayList<>();
+
+    private transient StringProperty nameProperty;
+
     public Product() {
     }
 
-    public Product(String name, String description, Double price, Integer quantity, Category category) {
+    public Product(String name, String description, Double price, Category category) {
         this.name = name;
         this.description = description;
         this.price = price;
-        this.quantity = quantity;
         this.category = category;
     }
 
@@ -40,6 +48,16 @@ public class Product extends SimpleEntity {
 
     public void setName(String name) {
         this.name = name;
+        if (nameProperty != null) {
+            nameProperty.set(name);
+        }
+    }
+
+    public StringProperty nameProperty() {
+        if (nameProperty == null) {
+            nameProperty = new SimpleStringProperty(getName());
+        }
+        return nameProperty;
     }
 
     public String getDescription() {
@@ -58,13 +76,6 @@ public class Product extends SimpleEntity {
         this.price = price;
     }
 
-    public Integer getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(Integer quantity) {
-        this.quantity = quantity;
-    }
 
     public Category getCategory() {
         return category;
@@ -76,5 +87,29 @@ public class Product extends SimpleEntity {
 
     public String getCategoryName() {
         return category != null ? category.getName() : "";
+    }
+
+    public List<ProductParameter> getParameters() {
+        return parameters;
+    }
+
+    public void setParameters(List<ProductParameter> parameters) {
+        this.parameters = parameters;
+    }
+
+    public void addParameter(ProductParameter parameter) {
+        parameters.add(parameter);
+        parameter.setProduct(this);
+    }
+
+    public void removeParameter(ProductParameter parameter) {
+        parameters.remove(parameter);
+        parameter.setProduct(null);
+    }
+
+    public Integer getQuantity() {
+        return parameters.stream()
+                .mapToInt(ProductParameter::getStockQuantity)
+                .sum();
     }
 }

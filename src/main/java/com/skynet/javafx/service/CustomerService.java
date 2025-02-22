@@ -35,5 +35,11 @@ public class CustomerService implements FrameService {
 		logger.debug("Saving customer: {}", customer);		
 		customerRepository.save(customer);
 	}
+	// get all customers
+	public List<Customer> getAllCustomers() {
+		List<Customer> customers = new ArrayList<>();
+		customerRepository.findAll().forEach(customers::add);
+		return customers;
+	}
 
 }

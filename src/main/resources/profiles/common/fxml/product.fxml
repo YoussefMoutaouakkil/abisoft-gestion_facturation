@@ -1,40 +1,75 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.ComboBox?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Tab?>
-<?import javafx.scene.control.TabPane?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.Pane?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="450.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.skynet.javafx.controller.ProductController">
-         <children>
-            <TabPane prefHeight="400.0" prefWidth="600.0" tabClosingPolicy="UNAVAILABLE">
-              <tabs>
-                <Tab text="Basic">
-                  <content>
-                    <AnchorPane prefHeight="334.0" prefWidth="600.0">
-                      <children>
-                        <Label layoutX="25.0" layoutY="26.0" text="Name:" />
-                        <TextField fx:id="nameColumn" layoutX="92.0" layoutY="21.0" prefHeight="26.0" prefWidth="478.0" />
-                        <Label layoutX="25.0" layoutY="77.0" text="Price:" />
-                        <TextField fx:id="priceColumn" layoutX="92.0" layoutY="72.0" prefHeight="26.0" prefWidth="478.0" />
-                        <Label layoutX="25.0" layoutY="128.0" text="Quantity:" />
-                        <TextField fx:id="quantityColumn" layoutX="92.0" layoutY="123.0" prefHeight="26.0" prefWidth="478.0" />
-                        <Label layoutX="25.0" layoutY="179.0" text="Category:" />
-                        <ComboBox fx:id="categoryComboBox" layoutX="92.0" layoutY="174.0" prefHeight="26.0" prefWidth="478.0" />
-                      </children>
-                    </AnchorPane>
-                  </content>
-                  </Tab>
-              </tabs>
-            </TabPane>
-            <Pane nodeOrientation="RIGHT_TO_LEFT" prefHeight="60.0" prefWidth="600.0">
-               <children>
-      	        <fx:include fx:id="buttonbar" source="buttonbar.fxml" />
-               </children>
-            </Pane>
-         </children>
-</VBox>
+<ScrollPane fitToWidth="true" prefHeight="600" prefWidth="500" xmlns:fx="http://javafx.com/fxml/1" 
+            xmlns="http://javafx.com/javafx/11.0.1" fx:controller="com.skynet.javafx.controller.ProductController">
+    <VBox spacing="10">
+        <padding>
+            <Insets top="5" right="5" bottom="5" left="5"/>
+        </padding>
+        
+        <!-- Basic Info Section -->
+        <TitledPane text="Basic Information" expanded="true">
+            <GridPane hgap="10" vgap="10">
+                <TextField fx:id="idColumn" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+                
+                <Label text="Name:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                <TextField fx:id="nameColumn" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                
+                <Label text="Price:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                <TextField fx:id="priceColumn" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+                
+                <Label text="Category:" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+                <ComboBox fx:id="categoryComboBox" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+                
+                <Label text="Total Quantity:" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
+                <TextField fx:id="quantityColumn" editable="false" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+            </GridPane>
+        </TitledPane>
+
+        <!-- Parameters Section -->
+        <TitledPane text="Parameters" expanded="false">
+            <VBox spacing="5">
+                <HBox spacing="5">
+                    <TextField fx:id="paramNameField" promptText="Parameter Name"/>
+                    <Button text="Add" onAction="#addParameter"/>
+                </HBox>
+                <TableView fx:id="parametersTable" prefHeight="150" VBox.vgrow="ALWAYS" editable="true">
+                    <columns>
+                        <TableColumn fx:id="paramNameColumn" text="Parameter" prefWidth="150"/>
+                        <TableColumn fx:id="paramActionColumn" text="Actions" prefWidth="100"/>
+                    </columns>
+                </TableView>
+            </VBox>
+        </TitledPane>
+
+        <!-- Parameter Values Section -->
+        <TitledPane text="Parameter Values" expanded="false">
+            <VBox spacing="5">
+                <HBox spacing="5">
+                    <ComboBox fx:id="parameterComboBox" promptText="Select Parameter" prefWidth="150"/>
+                    <TextField fx:id="valueField" promptText="Value"/>
+                    <TextField fx:id="stockQuantityField" promptText="Stock" prefWidth="80"/>
+                    <Button text="Add" onAction="#addParameterValue"/>
+                </HBox>
+                <TableView fx:id="parameterValuesTable" prefHeight="150">
+                    <columns>
+                        <TableColumn fx:id="parameterNameColumn" text="Parameter" prefWidth="100"/>
+                        <TableColumn fx:id="valueColumn" text="Value" prefWidth="100"/>
+                        <TableColumn fx:id="stockColumn" text="Stock" prefWidth="80"/>
+                        <TableColumn fx:id="valueActionsColumn" text="Actions" prefWidth="80"/>
+                    </columns>
+                </TableView>
+            </VBox>
+        </TitledPane>
+
+        <!-- Actions -->
+        <HBox spacing="10" alignment="CENTER_RIGHT">
+            <Button text="Save" onAction="#save"/>
+            <Button text="Cancel" onAction="#cancel"/>
+        </HBox>
+    </VBox>
+</ScrollPane>

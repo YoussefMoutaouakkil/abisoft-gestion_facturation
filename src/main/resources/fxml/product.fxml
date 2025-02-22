@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<SplitPane dividerPositions="0.6" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/11.0.1" 
+           fx:controller="com.skynet.javafx.controller.ProductController">
+    <GridPane fx:id="gridPane">
+        <padding>
+            <Insets top="5" right="5" bottom="5" left="5"/>
+        </padding>
+        <columnConstraints>
+            <ColumnConstraints />
+        </columnConstraints>
+        <rowConstraints>
+            <RowConstraints />
+            <RowConstraints />
+        </rowConstraints>
+        <TableView fx:id="table" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+        <fx:include source="buttonbar.fxml" fx:id="buttonbar" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+    </GridPane>
+
+    <VBox spacing="10">
+        <padding>
+            <Insets top="5" right="5" bottom="5" left="5"/>
+        </padding>
+        <GridPane hgap="10" vgap="10">
+            <TextField fx:id="idColumn" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+            
+            <Label text="Name:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+            <TextField fx:id="nameColumn" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+            
+            <Label text="Price:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+            <TextField fx:id="priceColumn" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+            
+            <Label text="Category:" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+            <ComboBox fx:id="categoryComboBox" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+            
+            <Label text="Total Quantity:" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
+            <TextField fx:id="quantityColumn" editable="false" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+        </GridPane>
+
+        <TitledPane text="Product Parameters" expanded="true">
+            <VBox spacing="5">
+                <HBox spacing="5">
+                    <TextField fx:id="paramNameField" promptText="Parameter Name"/>
+                    <Button text="Add Parameter" onAction="#addParameter"/>
+                </HBox>
+                
+                <TableView fx:id="parametersTable" VBox.vgrow="ALWAYS" editable="true">
+                    <columns>
+                        <TableColumn fx:id="paramNameColumn" text="Parameter"/>
+                        <TableColumn fx:id="paramActionColumn" text="Actions"/>
+                    </columns>
+                </TableView>
+
+                <TitledPane text="Parameter Values" expanded="true">
+                    <VBox spacing="5">
+                        <HBox spacing="5">
+                            <ComboBox fx:id="parameterComboBox" promptText="Select Parameter" prefWidth="150"/>
+                            <TextField fx:id="valueField" promptText="Value"/>
+                            <TextField fx:id="stockQuantityField" promptText="Stock Quantity"/>
+                            <Button text="Add Value" onAction="#addParameterValue"/>
+                        </HBox>
+                        
+                        <TableView fx:id="parameterValuesTable">
+                            <columns>
+                                <TableColumn fx:id="parameterNameColumn" text="Parameter"/>
+                                <TableColumn fx:id="valueColumn" text="Value"/>
+                                <TableColumn fx:id="stockColumn" text="Stock"/>
+                                <TableColumn fx:id="valueActionsColumn" text="Actions"/>
+                            </columns>
+                        </TableView>
+                    </VBox>
+                </TitledPane>
+            </VBox>
+        </TitledPane>
+    </VBox>
+</SplitPane>

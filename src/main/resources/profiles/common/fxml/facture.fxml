@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox spacing="10" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8" 
+      fx:controller="com.skynet.javafx.controller.FactureController">
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+
+    <!-- Invoice Details -->
+    <GridPane hgap="10" vgap="10">
+        <Label text="Numéro Facture" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+        <TextField fx:id="numeroFactureField" GridPane.columnIndex="1" GridPane.rowIndex="0" disable="true"/>
+
+        <Label text="Date Facture" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+        <DatePicker fx:id="dateFactureField" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+        <Label text="Client" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+        <ComboBox fx:id="clientComboBox" GridPane.columnIndex="1" GridPane.rowIndex="2" prefWidth="200"/>
+
+        <Label text="Status" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+        <ComboBox fx:id="statusComboBox" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+    </GridPane>
+
+    <!-- Product Selection -->
+    <TitledPane text="Ajouter Produit" expanded="true">
+        <VBox spacing="10">
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <ComboBox fx:id="productComboBox" prefWidth="200" promptText="Select Product"/>
+            </HBox>
+            <!-- Parameters Container -->
+            <VBox fx:id="parametersContainer" spacing="5"/>
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <TextField fx:id="quantityField" prefWidth="100" promptText="Quantité"/>
+                <Button text="Ajouter" onAction="#handleAddProduct"/>
+            </HBox>
+        </VBox>
+    </TitledPane>
+
+    <!-- Products Table -->
+    <TableView fx:id="productsTable" VBox.vgrow="ALWAYS">
+        <columns>
+            <TableColumn fx:id="productNameColumn" text="Produit"/>
+            <TableColumn fx:id="parametersColumn" text="Paramètres"/>
+            <TableColumn fx:id="priceColumn" text="Prix"/>
+            <TableColumn fx:id="quantityColumn" text="Quantité"/>
+            <TableColumn fx:id="totalColumn" text="Total"/>
+            <TableColumn fx:id="actionsColumn" text="Actions"/>
+        </columns>
+    </TableView>
+
+    <!-- Total and Actions -->
+    <HBox spacing="20" alignment="CENTER_RIGHT">
+        <Label text="Total:"/>
+        <Label fx:id="totalLabel" style="-fx-font-weight: bold;"/>
+    </HBox>
+
+    <HBox spacing="10">
+        <Button text="Vider" onAction="#handleAdd"/>
+        <Button text="Enregistrer" onAction="#handleSave"/>
+    </HBox>
+</VBox>
