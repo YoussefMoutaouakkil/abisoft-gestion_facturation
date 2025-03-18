@@ -1,7 +1,11 @@
 package com.skynet.javafx.service;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.Arrays;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +16,7 @@ import com.skynet.javafx.repository.CustomerRepository;
 import com.skynet.javafx.repository.ProductRepository;
 
 @Service
-public class ProductService implements FrameService {
+public class ProductService extends AbstractExcelExporter implements FrameService {
 
 	private static final Logger logger = LoggerFactory.getLogger(ProductService.class);	
 	
@@ -36,4 +40,31 @@ public class ProductService implements FrameService {
 		productRepository.save(product);
 	}
 
+	@Override
+	public String getSheetName() {
+		return "Products";
+	}
+
+	@Override
+	public List<String> getHeaders() {
+		return Arrays.asList("ID", "Name", "Description", "Price", "Category");
+	}
+
+	@Override
+	public List<Map<String, Object>> getExportData() {
+		List<Map<String, Object>> data = new ArrayList<>();
+		List<Product> products = getData();
+		
+		for (Product product : products) {
+			Map<String, Object> row = new HashMap<>();
+			row.put("ID", product.getId());
+			row.put("Name", product.getName());
+			row.put("Description", product.getDescription());
+			row.put("Price", product.getPrice());
+			row.put("Category", product.getCategory() != null ? product.getCategory().getName() : "");
+			data.add(row);
+		}
+		
+		return data;
+	}
 }

@@ -11,6 +11,8 @@ import com.skynet.javafx.jfxsupport.AbstractFxmlView;
 import com.skynet.javafx.jfxsupport.FXMLController;
 import com.skynet.javafx.jfxsupport.PrototypeController;
 import com.skynet.javafx.model.SimpleEntity;
+import com.skynet.javafx.service.CustomerService;
+import com.skynet.javafx.service.ExcelExportable;
 import com.skynet.javafx.service.FrameService;
 import com.skynet.javafx.views.def.FrameGridDef;
 import javafx.collections.FXCollections;
@@ -25,6 +27,10 @@ import javafx.scene.input.KeyCode;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.event.ActionEvent;
+import javafx.stage.FileChooser;
+import java.io.File;
+import java.io.IOException;
 
 @FXMLController
 @Scope("prototype")
@@ -41,7 +47,7 @@ public class FrameGridController implements PrototypeController {
 	@FXML
 	private Button deleteButton;
 	@FXML
-	private Button printButton;
+	private Button exportButton;  // Changed from printButton
 	@FXML
 	private TableView<SimpleEntity> frameGrid;
 	private FrameService frameService;
@@ -52,11 +58,11 @@ public class FrameGridController implements PrototypeController {
 	private void initialize() {
 		editButton.setDisable(true);
 		deleteButton.setDisable(true);
-		printButton.setDisable(true);
+		exportButton.setDisable(false);  // Changed from printButton
 		addButton.setOnAction((event) -> { addButtonHandleAction(); });
 		editButton.setOnAction((event) -> { editButtonHandleAction(); });
 		deleteButton.setOnAction((event) -> { deleteButtonHandleAction(); });
-		printButton.setOnAction((event) -> { printButtonHandleAction(); });
+		exportButton.setOnAction((event) -> { handleExport(event); });  // Changed from printButtonHandleAction
 	}
 	
 	private void addButtonHandleAction() {
@@ -78,8 +84,26 @@ public class FrameGridController implements PrototypeController {
 		loadData();
 	}
 	
-	private void printButtonHandleAction() {
-		logger.debug("clicked printButton");
+	@FXML
+	public void handleExport(ActionEvent event) {
+	    if (frameService instanceof ExcelExportable) {
+	        ExcelExportable exportable = (ExcelExportable) frameService;
+	        try {
+	            FileChooser fileChooser = new FileChooser();
+	            fileChooser.setTitle("Export to Excel");
+	            fileChooser.getExtensionFilters().add(
+	                new FileChooser.ExtensionFilter("Excel files (*.xlsx)", "*.xlsx"));
+	            
+	            File file = fileChooser.showSaveDialog(exportButton.getScene().getWindow());
+	            
+	            if (file != null) {
+	                exportable.exportToExcel(file.getAbsolutePath());
+	                logger.info("Successfully exported data to Excel");
+	            }
+	        } catch (IOException e) {
+	            logger.error("Error exporting to Excel", e);
+	        }
+	    }
 	}
 	
 	public void initializeGrid(FrameService frameService, FrameGridDef gridDef) {

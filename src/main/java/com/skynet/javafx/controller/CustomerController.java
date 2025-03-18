@@ -9,6 +9,9 @@ import com.skynet.javafx.model.SimpleEntity;
 import com.skynet.javafx.service.CustomerService;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
+import javafx.stage.FileChooser;
+import java.io.File;
+import java.io.IOException;
 
 @FXMLController
 public class CustomerController implements CrudController {
@@ -63,5 +66,24 @@ public class CustomerController implements CrudController {
     customer.setAddress(textAddress.getText());
     customer.setEmail(textEmail.getText());
     customerService.save(customer);
+  }
+
+  @FXML
+  public void handleExport() {
+    FileChooser fileChooser = new FileChooser();
+    fileChooser.setTitle("Export All Customers");
+    fileChooser.getExtensionFilters().add(
+        new FileChooser.ExtensionFilter("Excel files (*.xlsx)", "*.xlsx"));
+    
+    File file = fileChooser.showSaveDialog(textFirstname.getScene().getWindow());
+    
+    if (file != null) {
+        try {
+            customerService.exportToExcel(file.getAbsolutePath());
+            logger.info("Successfully exported all customers to Excel");
+        } catch (IOException e) {
+            logger.error("Error exporting to Excel", e);
+        }
+    }
   }
 }

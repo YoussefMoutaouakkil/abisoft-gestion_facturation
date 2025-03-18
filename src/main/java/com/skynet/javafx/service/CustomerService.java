@@ -8,9 +8,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.skynet.javafx.model.Customer;
 import com.skynet.javafx.repository.CustomerRepository;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Arrays;
+import java.util.Map;
 
 @Service
-public class CustomerService implements FrameService {
+public class CustomerService extends AbstractExcelExporter implements FrameService {
 
 	private static final Logger logger = LoggerFactory.getLogger(CustomerService.class);	
 	
@@ -41,5 +48,33 @@ public class CustomerService implements FrameService {
 		customerRepository.findAll().forEach(customers::add);
 		return customers;
 	}
+
+	@Override
+    public String getSheetName() {
+        return "Customers";
+    }
+
+    @Override
+    public List<String> getHeaders() {
+        return Arrays.asList("ID", "Firstname", "Lastname", "Address", "Email");
+    }
+
+    @Override
+    public List<Map<String, Object>> getExportData() {
+        List<Map<String, Object>> data = new ArrayList<>();
+        List<Customer> customers = getAllCustomers();
+        
+        for (Customer customer : customers) {
+            Map<String, Object> row = new HashMap<>();
+            row.put("ID", customer.getId());
+            row.put("Firstname", customer.getFirstname());
+            row.put("Lastname", customer.getLastname());
+            row.put("Address", customer.getAddress());
+            row.put("Email", customer.getEmail());
+            data.add(row);
+        }
+        
+        return data;
+    }
 
 }

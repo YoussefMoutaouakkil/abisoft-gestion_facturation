@@ -8,6 +8,6 @@
       <Button fx:id="addButton" mnemonicParsing="false" prefWidth="80.0" text="Add" />
       <Button fx:id="editButton" mnemonicParsing="false" prefWidth="80.0" text="Edit" />
       <Button fx:id="deleteButton" mnemonicParsing="false" prefWidth="80.0" text="Delete" />
-      <Button fx:id="printButton" mnemonicParsing="false" prefWidth="80.0" text="Print" />
+      <Button fx:id="exportButton" mnemonicParsing="false" prefWidth="80.0" text="Export" styleClass="export-button" onAction="#handleExport" />
    </children>
 </HBox>
