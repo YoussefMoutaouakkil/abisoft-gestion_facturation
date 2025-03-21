@@ -64,6 +64,7 @@ public class DataLoader implements CommandLineRunner {
         createAndSaveMenuItem(4L, 1L, "master.products", "Mes produits", "productService", "productGridDef", "product_16x16.png");
         createAndSaveMenuItem(5L, 1L, "master.invoices", "Factures", "factureService", "factureGridDef", "invoice_16x16.png"); // Fix gridDef name
         createAndSaveMenuItem(6L, 1L, "master.devis", "Devis", "devisService", "devisGridDef", "invoice_16x16.png");
+        createAndSaveMenuItem(7L, 1L, "master.info", "Mes informations", "companyInfoService", "companyInfoGridDef", "customers_16x16.png");
     }
 
     private void createAndSaveMenuItem(Long id, Long parent, String key, String value, String service, String gridDef, String image) {

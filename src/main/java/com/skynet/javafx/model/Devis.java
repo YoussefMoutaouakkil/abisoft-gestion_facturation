@@ -11,9 +11,10 @@ import org.springframework.stereotype.Component;
 @Table(name = "devis")
 public class Devis extends SimpleEntity {
     
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    // Remove this ID declaration as it's already in SimpleEntity
+    // @Id
+    // @GeneratedValue(strategy = GenerationType.IDENTITY)
+    // private Long id;
 
     @Column(name = "numero_devis", nullable = false, unique = true)
     private String numeroDevis;

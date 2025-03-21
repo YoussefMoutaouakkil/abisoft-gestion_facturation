@@ -28,4 +28,18 @@ public abstract class SimpleEntity implements Serializable {
     public void setId(Long id) {
         this.id = id;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (!(obj instanceof SimpleEntity)) return false;
+
+        SimpleEntity other = (SimpleEntity) obj;
+        return id != null && id.equals(other.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return id != null ? id.hashCode() : 0;
+    }
 }

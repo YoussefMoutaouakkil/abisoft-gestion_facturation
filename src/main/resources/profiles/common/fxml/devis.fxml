@@ -58,6 +58,10 @@
         <Label fx:id="totalLabel" style="-fx-font-weight: bold;"/>
     </HBox>
 
+    <HBox spacing="10">
+        <Button text="Vider" onAction="#handleEmpty"/>
+        <Button text="Enregistrer" onAction="#handleSave"/>
+    </HBox>
     <!-- Replace the bottom HBox with the buttonbar include -->
-    <fx:include source="buttonbar.fxml" fx:id="buttonbar"/>
+    <!-- <fx:include source="buttonbar.fxml" fx:id="buttonbar"/> -->
 </VBox>

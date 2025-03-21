@@ -2,7 +2,7 @@ package com.skynet.javafx.controller;
 
 import com.skynet.javafx.model.SimpleEntity;
 
-public interface CrudController {
+public interface CrudController{
 
 	public void add();
 
