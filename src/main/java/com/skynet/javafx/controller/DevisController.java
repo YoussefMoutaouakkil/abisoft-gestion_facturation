@@ -219,7 +219,7 @@ public class DevisController implements CrudController {
         double total = devisProducts.stream()
                 .mapToDouble(p -> p.getPrice() * p.getQuantity())
                 .sum();
-        totalLabel.setText(String.format("%.2f €", total));
+        totalLabel.setText(String.format("%.2f MAD", total));
         if (currentDevis != null) {
             currentDevis.setMontantTotal(total);
         }
