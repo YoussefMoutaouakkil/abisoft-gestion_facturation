@@ -39,9 +39,11 @@
                 
                 <Label text="Adresse:" GridPane.columnIndex="0" GridPane.rowIndex="2" GridPane.valignment="CENTER"/>
                 <TextField fx:id="adresseField" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+                <Label text="Telephone:" GridPane.columnIndex="0" GridPane.rowIndex="3" GridPane.valignment="CENTER"/>
+                <TextField fx:id="phoneField" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
                 
-                <Label text="Logo:" GridPane.columnIndex="0" GridPane.rowIndex="3" GridPane.valignment="CENTER"/>
-                <HBox spacing="10" GridPane.columnIndex="1" GridPane.rowIndex="3" alignment="CENTER_LEFT">
+                <Label text="Logo:" GridPane.columnIndex="0" GridPane.rowIndex="4" GridPane.valignment="CENTER"/>
+                <HBox spacing="10" GridPane.columnIndex="1" GridPane.rowIndex="4" alignment="CENTER_LEFT">
                     <Button fx:id="logoButton" text="Choose Logo"/>
                     <ImageView fx:id="logoPreview" fitHeight="100" fitWidth="100" preserveRatio="true"/>
                 </HBox>

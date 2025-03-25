@@ -1,6 +1,7 @@
 package com.skynet.javafx.controller;
 
 import com.skynet.javafx.model.*;
+import com.skynet.javafx.repository.DevisRepository;
 import com.skynet.javafx.service.DevisService;
 import com.skynet.javafx.service.CustomerService;
 import com.skynet.javafx.service.ProductService;
@@ -74,7 +75,9 @@ public class DevisController implements CrudController {
     private CustomerService customerService;
     @Autowired
     private ProductService productService;
-
+    @Autowired
+    private DevisRepository devisRepository;
+    
     private Devis currentDevis;
     private ObservableList<DevisProduct> devisProducts;
 
@@ -228,7 +231,7 @@ public class DevisController implements CrudController {
         currentDevis.setDateDevis(LocalDateTime.now());
         currentDevis.setStatus("En cours");
         // The number will be generated when saved
-        numeroDevisField.setText("(Auto-généré)");
+        numeroDevisField.setText(generateInvoiceNumber());
         dateDevisField.setValue(LocalDateTime.now().toLocalDate());
         clientComboBox.setValue(null);
         statusComboBox.setValue("En cours");
@@ -305,109 +308,18 @@ public class DevisController implements CrudController {
         alert.setContentText(message);
         alert.showAndWait();
     }
-
-    @FXML
-    public void handleExport2() {
-        if (currentDevis == null) {
-            showError("Aucun devis à exporter");
-            return;
+    private String generateInvoiceNumber() {
+        String year = String.format("%02d", LocalDateTime.now().getYear() % 100);
+        Devis lastDevis = devisRepository.findLastDevisForYear(year + "/");
+        
+        int nextNumber = 1;
+        if (lastDevis != null) {
+            String lastNumber = lastDevis.getNumeroDevis().split("/")[1];
+            nextNumber = Integer.parseInt(lastNumber) + 1;
         }
-
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Exporter le devis");
-        fileChooser.getExtensionFilters().add(
-                new FileChooser.ExtensionFilter("Excel Files", "*.xlsx"));
-        String defaultFileName = "Devis_" + currentDevis.getNumeroDevis().replace("/", "_") + ".xlsx";
-        fileChooser.setInitialFileName(defaultFileName);
-
-        File file = fileChooser.showSaveDialog(totalLabel.getScene().getWindow());
-        if (file != null) {
-            exportToExcel(file);
-        }
+        
+        return String.format("%s/%02d", year, nextNumber);
     }
-
-    private void exportToExcel(File file) {
-        try (Workbook workbook = new XSSFWorkbook()) {
-            // Create sheet for devis details
-            Sheet sheet = workbook.createSheet("Devis " + currentDevis.getNumeroDevis());
-
-            // Create header style
-            CellStyle headerStyle = workbook.createCellStyle();
-            Font headerFont = workbook.createFont();
-            headerFont.setBold(true);
-            headerStyle.setFont(headerFont);
-
-            // Create header row for basic details
-            Row headerRow = sheet.createRow(0);
-            Cell cell = headerRow.createCell(0);
-            cell.setCellValue("Détails du Devis");
-            cell.setCellStyle(headerStyle);
-
-            // Add devis information
-            Row infoRow1 = sheet.createRow(1);
-            infoRow1.createCell(0).setCellValue("Numéro Devis:");
-            infoRow1.createCell(1).setCellValue(currentDevis.getNumeroDevis());
-
-            Row infoRow2 = sheet.createRow(2);
-            infoRow2.createCell(0).setCellValue("Date:");
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-            infoRow2.createCell(1).setCellValue(currentDevis.getDateDevis().format(formatter));
-
-            Row infoRow3 = sheet.createRow(3);
-            infoRow3.createCell(0).setCellValue("Client:");
-            Customer client = currentDevis.getClient();
-            infoRow3.createCell(1).setCellValue(client.getFirstname() + " " + client.getLastname());
-
-            Row infoRow4 = sheet.createRow(4);
-            infoRow4.createCell(0).setCellValue("Status:");
-            infoRow4.createCell(1).setCellValue(currentDevis.getStatus());
-
-            // Create header for products table
-            Row tableHeader = sheet.createRow(6);
-            String[] headers = { "Produit", "Paramètres", "Prix", "Quantité", "Total" };
-            for (int i = 0; i < headers.length; i++) {
-                cell = tableHeader.createCell(i);
-                cell.setCellValue(headers[i]);
-                cell.setCellStyle(headerStyle);
-            }
-
-            // Add product data
-            int rowIndex = 7;
-            for (DevisProduct product : currentDevis.getProducts()) {
-                Row row = sheet.createRow(rowIndex++);
-                row.createCell(0).setCellValue(product.getProduct().getName());
-                row.createCell(1).setCellValue(
-                        product.getParameterDescription() != null ? product.getParameterDescription() : "");
-                row.createCell(2).setCellValue(product.getPrice());
-                row.createCell(3).setCellValue(product.getQuantity());
-                row.createCell(4).setCellValue(product.getTotal());
-            }
-
-            // Add total
-            Row totalRow = sheet.createRow(rowIndex + 1);
-            cell = totalRow.createCell(3);
-            cell.setCellValue("Total:");
-            cell.setCellStyle(headerStyle);
-            totalRow.createCell(4).setCellValue(currentDevis.getMontantTotal());
-
-            // Auto-size columns
-            for (int i = 0; i < 5; i++) {
-                sheet.autoSizeColumn(i);
-            }
-
-            // Write the output to file
-            try (FileOutputStream outputStream = new FileOutputStream(file)) {
-                workbook.write(outputStream);
-            }
-
-            showSuccess("Devis exporté avec succès vers " + file.getName());
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            showError("Erreur lors de l'exportation: " + e.getMessage());
-        }
-    }
-
     /**
      * Handler for the "Vider" (Empty) button
      */

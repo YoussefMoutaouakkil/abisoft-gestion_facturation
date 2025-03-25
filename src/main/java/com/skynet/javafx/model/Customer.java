@@ -17,6 +17,10 @@ public class Customer extends SimpleEntity {
 
   @Column
   private String email;
+  @Column
+  private String ICE;
+  @Column
+  private String type;
 
   public String getFirstname() {
     return firstname;
@@ -48,5 +52,18 @@ public class Customer extends SimpleEntity {
 
   public void setEmail(String email) {
     this.email = email;
+  }
+  public String getICE() {
+    return ICE;
+  }
+  public void setICE(String ICE) {
+    this.ICE = ICE;
+  }
+  public String getType() {
+    return type;
+  }
+
+  public void setType(String type) {
+    this.type = type;
   }
 }

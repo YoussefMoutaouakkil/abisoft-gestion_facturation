@@ -16,4 +16,5 @@ public class CompanyInfo extends SimpleEntity {
     
     @Lob
     private byte[] logo;
+    private String telephone;
 }

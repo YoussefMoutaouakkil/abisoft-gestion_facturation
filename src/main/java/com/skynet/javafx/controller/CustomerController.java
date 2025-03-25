@@ -9,6 +9,8 @@ import com.skynet.javafx.model.SimpleEntity;
 import com.skynet.javafx.service.CustomerService;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.stage.FileChooser;
 import java.io.File;
 import java.io.IOException;
@@ -20,7 +22,7 @@ public class CustomerController implements CrudController {
 
   @FXML
   private ButtonBarController buttonbarController;
-  
+
   @FXML
   private TextField textFirstname;
   @FXML
@@ -29,6 +31,12 @@ public class CustomerController implements CrudController {
   private TextField textAddress;
   @FXML
   private TextField textEmail;
+  @FXML
+  private ComboBox<String> comboType;
+  @FXML
+  private TextField textICE;
+  @FXML
+  private Label labelICE;
 
   @Autowired
   private CustomerService customerService;
@@ -40,20 +48,44 @@ public class CustomerController implements CrudController {
     logger.debug("initialize CustomerController");
 
     buttonbarController.setTarget(this);
+
+    comboType.getItems().addAll("Personne Physique", "Entreprise");
+    comboType.setValue("Personne Physique");
+
+    comboType.setOnAction(e -> {
+      boolean isEntreprise = "Entreprise".equals(comboType.getValue());
+      textICE.setVisible(isEntreprise);
+      labelICE.setVisible(isEntreprise);
+    });
   }
 
   @Override
   public void add() {
     // TODO Auto-generated method stub
+    // empty form
+    customer = null;
+    comboType.setValue("Personne Physique");
+    textFirstname.setText("");
+    textLastname.setText("");
+    textAddress.setText("");
+    textEmail.setText("");
+    textICE.setText("");
+    textICE.setVisible(false);
+    labelICE.setVisible(false);
   }
 
   @Override
   public void render(SimpleEntity entity) {
     customer = (Customer) entity;
+    comboType.setValue(customer.getType());
     textFirstname.setText(customer.getFirstname());
     textLastname.setText(customer.getLastname());
     textAddress.setText(customer.getAddress());
     textEmail.setText(customer.getEmail());
+    textICE.setText(customer.getICE());
+    boolean isEntreprise = "Entreprise".equals(customer.getType());
+    textICE.setVisible(isEntreprise);
+    labelICE.setVisible(isEntreprise);
   }
 
   @Override
@@ -61,29 +93,12 @@ public class CustomerController implements CrudController {
     if (customer == null) {
       customer = new Customer();
     }
+    customer.setType(comboType.getValue());
     customer.setFirstname(textFirstname.getText());
     customer.setLastname(textLastname.getText());
     customer.setAddress(textAddress.getText());
     customer.setEmail(textEmail.getText());
+    customer.setICE(textICE.getText());
     customerService.save(customer);
-  }
-
-  @FXML
-  public void handleExport() {
-    FileChooser fileChooser = new FileChooser();
-    fileChooser.setTitle("Export All Customers");
-    fileChooser.getExtensionFilters().add(
-        new FileChooser.ExtensionFilter("Excel files (*.xlsx)", "*.xlsx"));
-    
-    File file = fileChooser.showSaveDialog(textFirstname.getScene().getWindow());
-    
-    if (file != null) {
-        try {
-            customerService.exportToExcel(file.getAbsolutePath());
-            logger.info("Successfully exported all customers to Excel");
-        } catch (IOException e) {
-            logger.error("Error exporting to Excel", e);
-        }
-    }
   }
 }

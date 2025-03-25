@@ -9,8 +9,5 @@
    <children>
       <Button fx:id="cancelButton" layoutX="133.0" layoutY="15.0" mnemonicParsing="false" prefWidth="80.0" text="Cancel" />
       <Button fx:id="acceptButton" layoutX="36.0" layoutY="15.0" mnemonicParsing="false" prefWidth="80.0" text="Accept" />
-      <Button mnemonicParsing="false" onAction="#handleExport" text="Export to Excel" />
-      <Button mnemonicParsing="false" onAction="#handleCancel" text="Cancel" />
-      <Button mnemonicParsing="false" onAction="#handleSave" text="Save" />
    </children>
 </Pane>

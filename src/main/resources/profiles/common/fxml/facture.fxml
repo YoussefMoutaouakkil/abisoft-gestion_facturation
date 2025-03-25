@@ -13,7 +13,7 @@
     <!-- Invoice Details -->
     <GridPane hgap="10" vgap="10">
         <Label text="Numéro Facture" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
-        <TextField fx:id="numeroFactureField" GridPane.columnIndex="1" GridPane.rowIndex="0" disable="true"/>
+        <TextField fx:id="numeroFactureField" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
 
         <Label text="Date Facture" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
         <DatePicker fx:id="dateFactureField" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
