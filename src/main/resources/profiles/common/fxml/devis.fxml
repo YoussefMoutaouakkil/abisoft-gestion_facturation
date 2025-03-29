@@ -13,7 +13,7 @@
     <!-- Quote Details -->
     <GridPane hgap="10" vgap="10">
         <Label text="Numéro Devis" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
-        <TextField fx:id="numeroDevisField" GridPane.columnIndex="1" GridPane.rowIndex="0" disable="true"/>
+        <TextField fx:id="numeroDevisField" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
 
         <Label text="Date Devis" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
         <DatePicker fx:id="dateDevisField" GridPane.columnIndex="1" GridPane.rowIndex="1"/>

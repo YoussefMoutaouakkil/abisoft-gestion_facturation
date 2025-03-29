@@ -23,6 +23,7 @@ public class CompanyInfoService implements FrameService {
             CompanyInfo existing = existingInfo.get(0);
             existing.setRaisonSociale(companyInfo.getRaisonSociale());
             existing.setAdresse(companyInfo.getAdresse());
+            existing.setTelephone(companyInfo.getTelephone());
             
             // Only update logo if a new one was provided
             if (companyInfo.getLogo() != null && companyInfo.getLogo().length > 0) {

@@ -19,7 +19,7 @@ public class DevisGridDef implements FrameGridDef {
 
     @Override
     public List<String> getColumnDataName() {
-        return Arrays.asList("numeroDevis", "dateDevis", "client", "status", "montantTotal");
+        return Arrays.asList("numeroDevis", "dateDevis", "clientName", "status", "montantTotal");
     }
 
     @Override

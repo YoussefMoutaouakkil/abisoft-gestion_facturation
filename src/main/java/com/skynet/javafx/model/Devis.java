@@ -32,7 +32,7 @@ public class Devis extends SimpleEntity {
     @Column(name = "montant_total")
     private Double montantTotal = 0.0;
     
-    @OneToMany(mappedBy = "devis", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "devis", cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.EAGER)
     private List<DevisProduct> products = new ArrayList<>();
     
     @Column(name = "validity_period")
@@ -126,5 +126,9 @@ public class Devis extends SimpleEntity {
         this.montantTotal = products.stream()
                 .mapToDouble(p -> p.getPrice() * p.getQuantity())
                 .sum();
+    }
+    // getClientName
+    public String getClientName() {
+        return client != null ? client.getFirstname() + " " + client.getLastname() : "";
     }
 }

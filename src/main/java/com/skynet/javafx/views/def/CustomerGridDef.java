@@ -9,10 +9,10 @@ import com.skynet.javafx.views.CustomerView;
 public class CustomerGridDef implements FrameGridDef {
 
 	public static String COLUMN_NAMES[] = 
-		{ "Id", "Firstname", "Lastname", "Address", "Email"};
+		{ "Id", "Type", "Firstname", "Lastname", "Address", "Email", "ICE"};
 	public static String COLUMN_DATA_NAMES[] = 
-		{ "id", "firstname", "lastname", "address", "email" };
-	public static Integer COLUMN_SIZES[] = { 40, 200, 200, 200, 200 };
+		{ "id", "type", "firstname", "lastname", "address", "email", "ICE" };
+	public static Integer COLUMN_SIZES[] = { 40, 100, 150, 150, 200, 200, 100 };
 	public static String TITLE_POPUPS = "Customer";
 
 	@Override
