@@ -28,7 +28,8 @@ public class FactureService extends AbstractExcelExporter implements FrameServic
     public Facture save(Facture facture) {
         return factureRepository.save(facture);
     }
-
+    
+    
     public Facture findById(Long id) {
         return factureRepository.findById(id).orElse(null);
     }

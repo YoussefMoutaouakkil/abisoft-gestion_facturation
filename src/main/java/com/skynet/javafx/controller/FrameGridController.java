@@ -1,6 +1,9 @@
 package com.skynet.javafx.controller;
 
+import java.util.HashMap;
 import java.util.List;
+
+import javax.swing.SwingUtilities;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,16 +13,22 @@ import org.springframework.context.annotation.Scope;
 import com.skynet.javafx.jfxsupport.AbstractFxmlView;
 import com.skynet.javafx.jfxsupport.FXMLController;
 import com.skynet.javafx.jfxsupport.PrototypeController;
+import com.skynet.javafx.model.Facture;
 import com.skynet.javafx.model.SimpleEntity;
 import com.skynet.javafx.service.CustomerService;
 import com.skynet.javafx.service.ExcelExportable;
+import com.skynet.javafx.service.FactureService;
 import com.skynet.javafx.service.FrameService;
 import com.skynet.javafx.views.def.FrameGridDef;
+
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -27,17 +36,36 @@ import javafx.scene.input.KeyCode;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperExportManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.design.JRDesignQuery;
+import net.sf.jasperreports.engine.design.JasperDesign;
+import net.sf.jasperreports.engine.xml.JRXmlLoader;
+import net.sf.jasperreports.view.JasperViewer;
 import javafx.event.ActionEvent;
 import javafx.stage.FileChooser;
+
+import java.awt.Desktop;
+import java.awt.GraphicsEnvironment;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.time.format.DateTimeFormatter;
 
 @FXMLController
 @Scope("prototype")
 public class FrameGridController implements PrototypeController {
-
+	DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d MMMM yyyy");
 	private static final Logger logger = LoggerFactory.getLogger(FrameGridController.class);	
-	
+	private static final String USERNAME = "root";
+	private static final String PASSWORD = "";
 	@Autowired
 	private ApplicationContext context;
 	@FXML
@@ -49,6 +77,10 @@ public class FrameGridController implements PrototypeController {
 	@FXML
 	private Button exportButton;  // Changed from printButton
 	@FXML
+	private Button printButton;// Changed from printButton
+	@FXML
+	ProgressBar probar;
+	@FXML
 	private TableView<SimpleEntity> frameGrid;
 	private FrameService frameService;
 	private FrameGridDef gridDef;
@@ -58,11 +90,13 @@ public class FrameGridController implements PrototypeController {
 	private void initialize() {
 		editButton.setDisable(true);
 		deleteButton.setDisable(true);
+		printButton.setDisable(true);
 		exportButton.setDisable(false);  // Changed from printButton
 		addButton.setOnAction((event) -> { addButtonHandleAction(); });
 		editButton.setOnAction((event) -> { editButtonHandleAction(); });
 		deleteButton.setOnAction((event) -> { deleteButtonHandleAction(); });
 		exportButton.setOnAction((event) -> { handleExport(event); });  // Changed from printButtonHandleAction
+	   printButton.setOnAction((event) -> { handlePrint(event); });
 	}
 	
 	private void addButtonHandleAction() {
@@ -105,6 +139,23 @@ public class FrameGridController implements PrototypeController {
 	        }
 	    }
 	}
+	SimpleEntity entity;
+	@FXML
+	public void handlePrint(ActionEvent event) {
+		
+		entity = frameGrid.getSelectionModel().getSelectedItem();
+		System.out.println("entityId="+entity.getId());
+		if(entity!=null) {
+		probar.setVisible(true);
+		Task<Void> task = createTask1(event);
+		Thread t=new Thread(task);
+		//  t.start();
+		 probar.progressProperty().bind(task.progressProperty());
+		 t.start();}
+		else {
+			System.out.println("null!!!!!!!!!!!!!");
+		}
+	}
 	
 	public void initializeGrid(FrameService frameService, FrameGridDef gridDef) {
 		this.frameService = frameService;
@@ -129,9 +180,11 @@ public class FrameGridController implements PrototypeController {
 			if (newSelection != null) {
 				editButton.setDisable(false);
 				deleteButton.setDisable(false);
+				printButton.setDisable(false);
 			} else {
 				editButton.setDisable(true);
 				deleteButton.setDisable(true);
+				printButton.setDisable(true);
 			}
 		});
 		frameGrid.setOnKeyPressed(e -> {
@@ -171,5 +224,137 @@ public class FrameGridController implements PrototypeController {
         });
         stage.show();
 		return fxmlView;
+	}
+	
+	private Task<Void> createTask1(ActionEvent event) {
+	    return new Task<Void>() {
+	        @Override
+	        public Void call() {
+	        /*	try {
+					Thread.sleep(50);
+				} catch (InterruptedException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}*/
+
+	        	for (int i = 0; i < 10; i++) {
+	                updateProgress(i, 10);
+	                try {
+						Thread.sleep(200);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+	            }
+
+	             /*for (double i = 0; i < 3; i = i + 0.2) {
+	               if (isCancelled()) {
+	                    break;
+	                }
+	                updateProgress(i, 3);
+	                updateMessage("المرجو الانتظار");
+	                try {
+	                    Thread.sleep(50);
+	                } catch (InterruptedException ex) {
+	                    return null;
+	                }
+	            }*/
+	            Platform.runLater(new Runnable() {
+	                @Override
+	                public void run() {
+
+
+	                    Connection con=null;
+	               		  String unicode= "?useUnicode=yes&characterEncoding=UTF-8";
+	               		  String url = "jdbc:mysql://localhost/";
+	               		          String db = "gestion_facturation";
+	               		        // String driver = "com.mysql.jdbc.Driver";
+	               		       try {
+	   							Class.forName("com.mysql.cj.jdbc.Driver").newInstance();
+	   						} catch (InstantiationException e) {
+	   							// TODO Auto-generated catch block
+	   							e.printStackTrace();
+	   						} catch (IllegalAccessException e) {
+	   							// TODO Auto-generated catch block
+	   							e.printStackTrace();
+	   						} catch (ClassNotFoundException e) {
+	   							// TODO Auto-generated catch block
+	   							e.printStackTrace();
+	   						}
+	           	  		    try {
+	   							con = DriverManager.getConnection(url+db+unicode,USERNAME,PASSWORD);
+	   						} catch (SQLException e) {
+	   							// TODO Auto-generated catch block
+	   							e.printStackTrace();
+	   						}
+	           	  		
+	               	 InputStream report= getClass().getClassLoader().getResourceAsStream("jasper/template.jrxml");
+	                 if(report==null)
+	                	 System.out.println("raport null ======== ");
+	                 System.out.println("entity.getId()="+entity.getId());
+	               	 Facture facture=((FactureService) frameService).findById(entity.getId());
+	               	HashMap<String, Object> params = new HashMap<String, Object>();
+                    params.put("numFacture",facture.getNumeroFacture());
+                    String dateFacture=facture.getDateFacture().format(formatter);
+                    params.put("dateFacture",dateFacture);
+	               	 JasperDesign jd;
+					try {
+						jd = JRXmlLoader.load(report);
+						String sql="select 1";//,dossier,dossiervictime where ta3widdawi.id_da7iya=dossiervictime.id_vic and dossiervictime.NUMERO_DOSSIER=dossier.NUMERO_DOSSIER and victime.ID_VIC='"+VistaController.id_victime+"'"
+		               	JRDesignQuery  newQ= new JRDesignQuery();
+		               	newQ.setText(sql);
+		               	jd.setQuery(newQ);
+		               	JasperReport jr=JasperCompileManager.compileReport(jd);
+		               	JasperPrint jp=JasperFillManager.fillReport(jr,params,con);
+		               	String filePath1 = getpath(facture.getClientName(), facture.getNumeroFacture());
+
+		               	JasperExportManager.exportReportToPdfFile(jp, filePath1);
+		                try {
+		                    // Create the process to open the PDF file with the default viewer
+		                    ProcessBuilder processBuilder = new ProcessBuilder("cmd", "/c", "start", "\"\"",
+		                    		filePath1);
+		                    processBuilder.start();
+		                } catch (IOException e) {
+		                    e.printStackTrace();
+		                    System.out.println("Error opening PDF: " + e.getMessage());
+		                }
+					} catch (JRException e) {
+						
+						e.printStackTrace();
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+
+
+
+
+	                }
+	            });
+	            probar.setVisible(false);
+	            updateProgress(10, 10);
+	            return null;
+	        }
+	    };
+	}
+	
+	public String  getpath(String name,String numFacture) throws IOException{
+		String chemin1 =null;
+		String workingDirectory1 = System.getProperty("user.home");
+		File Gen1 = new File(workingDirectory1, "AppData/Local/Document_Facturation/pdf_factures/"+name);
+		File Gen = new File(Gen1, numFacture.replace('/', '_')+".pdf");
+		if(!Gen1.exists()) {
+		Gen1.mkdirs();
+		}
+		if(Gen.exists()) {
+			Gen.delete();
+			}
+		System.out.println("Gen1="+Gen1.getAbsolutePath());
+		boolean test=Gen.createNewFile();
+		System.out.println("test="+test);
+		if(test){
+			 chemin1 = Gen.getAbsolutePath().replace('\\','/');
+		}
+		return chemin1;
 	}
 }

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
+<!-- 2025-03-24T22:07:07 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="SampleReport" pageWidth="595" pageHeight="842" columnWidth="515" leftMargin="40" rightMargin="40" topMargin="50" bottomMargin="50" uuid="288ec680-2891-45f3-8577-301cfbd048dc">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<title>
+		<band height="100">
+			<staticText>
+				<reportElement x="239" y="47" width="100" height="30" uuid="507d543a-b0c6-45df-9dcf-e95a3a03a6b0"/>
+				<text><![CDATA[Bonjour]]></text>
+			</staticText>
+		</band>
+	</title>
+	<detail>
+		<band height="500">
+			<textField pattern="MMMMM dd, yyyy">
+				<reportElement x="10" y="460" width="100" height="30" uuid="a1d8da2a-70f4-4509-83a8-39d359f3c972"/>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField hyperlinkType="Reference" hyperlinkTarget="Blank">
+				<reportElement x="420" y="460" width="100" height="30" uuid="3d8daa61-48cc-44fd-86e6-7003767cdb6d"/>
+				<textFieldExpression><![CDATA["https://kanoun.ma"]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
 
-<AnchorPane layoutX="0" layoutY="0" prefHeight="280.0" prefWidth="521.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.skynet.javafx.controller.FrameGridController">
+<AnchorPane layoutX="0" layoutY="0" prefHeight="280.0" prefWidth="521.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.skynet.javafx.controller.FrameGridController">
 	<children>
       <GridPane layoutX="0" layoutY="0" prefHeight="313.0" prefWidth="537.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <columnConstraints>
@@ -20,6 +21,7 @@
             <fx:include fx:id="framebar" source="framebar.fxml" />
             <TableView fx:id="frameGrid" prefHeight="165.0" prefWidth="521.0" GridPane.rowIndex="1">
             </TableView>
+            <ProgressBar fx:id="probar" prefWidth="200.0" progress="0.0" visible="false" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
          </children>
       </GridPane>
 	</children>
