@@ -2,6 +2,7 @@ package com.skynet.javafx.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Lob;
 
 @Entity
 public class Customer extends SimpleEntity {
@@ -21,6 +22,8 @@ public class Customer extends SimpleEntity {
   private String ICE;
   @Column
   private String type;
+  @Column
+  private String tel;
 
   public String getFirstname() {
     return firstname;
@@ -66,4 +69,12 @@ public class Customer extends SimpleEntity {
   public void setType(String type) {
     this.type = type;
   }
+
+  public String getTel() {
+    return tel;
+  }
+  public void setTel(String tel) {
+    this.tel = tel;
+  }
+
 }

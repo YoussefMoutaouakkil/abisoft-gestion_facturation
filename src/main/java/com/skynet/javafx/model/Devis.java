@@ -38,8 +38,6 @@ public class Devis extends SimpleEntity {
     @Column(name = "validity_period")
     private Integer validityPeriod = 30; // Default validity period in days
     
-    @Column
-    private String notes;
 
     // Default constructor required by JPA
     public Devis() {}
@@ -99,14 +97,6 @@ public class Devis extends SimpleEntity {
 
     public void setValidityPeriod(Integer validityPeriod) {
         this.validityPeriod = validityPeriod;
-    }
-
-    public String getNotes() {
-        return notes;
-    }
-
-    public void setNotes(String notes) {
-        this.notes = notes;
     }
 
     // Helper methods

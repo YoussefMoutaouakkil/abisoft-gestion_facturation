@@ -13,6 +13,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextArea;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.context.annotation.Scope;
@@ -30,6 +32,7 @@ import com.skynet.javafx.model.ParameterValue;
 import com.skynet.javafx.repository.ProductRepository;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.TableCell;
@@ -75,6 +78,10 @@ public class FactureController implements CrudController, Initializable {
     private TableView<FactureProduct> productsTable;
     @FXML
     private Label totalLabel;
+    @FXML
+    private TextArea commentField;
+    @FXML
+    private CheckBox isArchivedCheckBox;
 
     @FXML
     private TableColumn<FactureProduct, String> productNameColumn;
@@ -276,6 +283,8 @@ public class FactureController implements CrudController, Initializable {
             dateFactureField.setValue(currentFacture.getDateFacture().toLocalDate());
             clientComboBox.setValue(currentFacture.getClient());
             statusComboBox.setValue(currentFacture.getStatus());
+            commentField.setText(currentFacture.getComment());
+            isArchivedCheckBox.setSelected(currentFacture.isArchived());
             updateProductsTable();
         }
     }
@@ -287,6 +296,8 @@ public class FactureController implements CrudController, Initializable {
                     .setDateFacture(LocalDateTime.of(dateFactureField.getValue(), LocalDateTime.now().toLocalTime()));
             currentFacture.setClient(clientComboBox.getValue());
             currentFacture.setStatus(statusComboBox.getValue());
+            currentFacture.setComment(commentField.getText());
+            currentFacture.setArchived(isArchivedCheckBox.isSelected());
             // montantTotal is calculated automatically when products are added/removed
         }
     }
@@ -296,6 +307,8 @@ public class FactureController implements CrudController, Initializable {
         dateFactureField.setValue(null);
         clientComboBox.setValue(null);
         statusComboBox.setValue(null);
+        commentField.clear();
+        isArchivedCheckBox.setSelected(false);
         if (currentFacture != null) {
             currentFacture.getProducts().clear();
             updateProductsTable();

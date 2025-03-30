@@ -13,6 +13,10 @@ public abstract class SimpleEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Lob
+    @Column(name = "comment", length = 65535, columnDefinition = "TEXT")
+    private String comment;
+
     public SimpleEntity() {
         super();
     }
@@ -41,5 +45,12 @@ public abstract class SimpleEntity implements Serializable {
     @Override
     public int hashCode() {
         return id != null ? id.hashCode() : 0;
+    }
+    // get and set methods for comment
+    public String getComment() {
+        return comment;
+    }
+    public void setComment(String comment) {
+        this.comment = comment;
     }
 }

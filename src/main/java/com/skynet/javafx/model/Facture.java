@@ -27,6 +27,8 @@ public class Facture extends SimpleEntity{
     
     @OneToMany(mappedBy = "facture", cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.EAGER)
     private List<FactureProduct> products = new ArrayList<>();
+
+    private boolean isArchived = false;
     
     public Facture() {}
 
@@ -74,5 +76,11 @@ public class Facture extends SimpleEntity{
     
     public String getClientName() {
         return client != null ? client.getFirstname() + " " + client.getLastname() : "";
+    }
+    public boolean isArchived() {
+        return isArchived;
+    }
+    public void setArchived(boolean isArchived) {
+        this.isArchived = isArchived;
     }
 }

@@ -1,5 +1,6 @@
 package com.skynet.javafx.controller;
 
+import com.itextpdf.layout.element.Text;
 import com.skynet.javafx.model.*;
 import com.skynet.javafx.repository.DevisRepository;
 import com.skynet.javafx.service.DevisService;
@@ -68,6 +69,8 @@ public class DevisController implements CrudController {
     private Pane buttonbar;
     @FXML
     private ButtonBarController buttonbarController;
+    @FXML
+    private TextArea commentField;
 
     @Autowired
     private DevisService devisService;
@@ -235,6 +238,7 @@ public class DevisController implements CrudController {
         dateDevisField.setValue(LocalDateTime.now().toLocalDate());
         clientComboBox.setValue(null);
         statusComboBox.setValue("En cours");
+        commentField.setText("");
         devisProducts.clear();
         updateTotal();
     }
@@ -248,6 +252,7 @@ public class DevisController implements CrudController {
             clientComboBox.setValue(currentDevis.getClient());
             statusComboBox.setValue(currentDevis.getStatus());
             devisProducts.setAll(currentDevis.getProducts());
+            commentField.setText(currentDevis.getComment());
             updateTotal();
         }
     }
@@ -287,6 +292,7 @@ public class DevisController implements CrudController {
         currentDevis.setStatus(statusComboBox.getValue());
         currentDevis.getProducts().clear();
         currentDevis.getProducts().addAll(devisProducts);
+        currentDevis.setComment(commentField.getText());
     }
 
     private void clearProductInputs() {

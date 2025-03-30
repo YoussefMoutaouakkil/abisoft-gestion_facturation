@@ -1,65 +1,92 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
 
-<VBox spacing="10" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8" 
-      fx:controller="com.skynet.javafx.controller.FactureController">
+<VBox prefHeight="899.0" prefWidth="648.0" spacing="10" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.skynet.javafx.controller.FactureController">
     <padding>
-        <Insets top="20" right="20" bottom="20" left="20"/>
+        <Insets bottom="20" left="20" right="20" top="20" />
     </padding>
 
     <!-- Invoice Details -->
-    <GridPane hgap="10" vgap="10">
-        <Label text="Numéro Facture" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
-        <TextField fx:id="numeroFactureField" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+    <GridPane hgap="10" prefHeight="236.0" prefWidth="608.0" vgap="10">
+        <Label text="Numéro Facture" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+        <TextField fx:id="numeroFactureField" maxWidth="200.0" prefHeight="25.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="0" />
 
-        <Label text="Date Facture" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
-        <DatePicker fx:id="dateFactureField" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+        <Label text="Date Facture" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+        <DatePicker fx:id="dateFactureField" prefHeight="25.0" prefWidth="201.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
 
-        <Label text="Client" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
-        <ComboBox fx:id="clientComboBox" GridPane.columnIndex="1" GridPane.rowIndex="2" prefWidth="200"/>
+        <Label text="Client" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+        <ComboBox fx:id="clientComboBox" prefHeight="25.0" prefWidth="200" GridPane.columnIndex="1" GridPane.rowIndex="2" />
 
-        <Label text="Status" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
-        <ComboBox fx:id="statusComboBox" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+        <Label text="Status" GridPane.rowIndex="3" />
+        <ComboBox fx:id="statusComboBox" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+      <CheckBox mnemonicParsing="false" fx:id="isArchivedCheckBox" text="Archiver" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+      <Label text="Commentaire"  GridPane.rowIndex="4" />
+      <TextArea prefHeight="80.0" fx:id="commentField" prefWidth="378.0" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+      <columnConstraints>
+         <ColumnConstraints />
+         <ColumnConstraints />
+         <ColumnConstraints />
+      </columnConstraints>
+      <rowConstraints>
+         <RowConstraints />
+         <RowConstraints />
+         <RowConstraints />
+         <RowConstraints />
+         <RowConstraints minHeight="10.0" prefHeight="80.0" />
+      </rowConstraints>
     </GridPane>
 
     <!-- Product Selection -->
-    <TitledPane text="Ajouter Produit" expanded="true">
+    <TitledPane expanded="true" text="Ajouter Produit">
         <VBox spacing="10">
-            <HBox spacing="10" alignment="CENTER_LEFT">
-                <ComboBox fx:id="productComboBox" prefWidth="200" promptText="Select Product"/>
+            <HBox alignment="CENTER_LEFT" spacing="10">
+                <ComboBox fx:id="productComboBox" prefWidth="200" promptText="Select Product" />
             </HBox>
             <!-- Parameters Container -->
-            <VBox fx:id="parametersContainer" spacing="5"/>
-            <HBox spacing="10" alignment="CENTER_LEFT">
-                <TextField fx:id="quantityField" prefWidth="100" promptText="Quantité"/>
-                <Button text="Ajouter" onAction="#handleAddProduct"/>
+            <VBox fx:id="parametersContainer" spacing="5" />
+            <HBox alignment="CENTER_LEFT" spacing="10">
+                <TextField fx:id="quantityField" prefWidth="100" promptText="Quantité" />
+                <Button onAction="#handleAddProduct" text="Ajouter" />
             </HBox>
         </VBox>
     </TitledPane>
 
     <!-- Products Table -->
-    <TableView fx:id="productsTable" VBox.vgrow="ALWAYS">
+    <TableView fx:id="productsTable" prefHeight="384.0" prefWidth="482.0" VBox.vgrow="ALWAYS">
         <columns>
-            <TableColumn fx:id="productNameColumn" text="Produit"/>
-            <TableColumn fx:id="parametersColumn" text="Paramètres"/>
-            <TableColumn fx:id="priceColumn" text="Prix"/>
-            <TableColumn fx:id="quantityColumn" text="Quantité"/>
-            <TableColumn fx:id="totalColumn" text="Total"/>
-            <TableColumn fx:id="actionsColumn" text="Actions"/>
+            <TableColumn fx:id="productNameColumn" text="Produit" />
+            <TableColumn fx:id="parametersColumn" text="Paramètres" />
+            <TableColumn fx:id="priceColumn" prefWidth="79.0" text="Prix" />
+            <TableColumn fx:id="quantityColumn" prefWidth="81.0" text="Quantité" />
+            <TableColumn fx:id="totalColumn" text="Total" />
+            <TableColumn fx:id="actionsColumn" text="Actions" />
         </columns>
     </TableView>
 
     <!-- Total and Actions -->
-    <HBox spacing="20" alignment="CENTER_RIGHT">
-        <Label text="Total:"/>
-        <Label fx:id="totalLabel" style="-fx-font-weight: bold;"/>
+    <HBox alignment="CENTER_RIGHT" spacing="20">
+        <Label fx:id="totalLabel" style="-fx-font-weight: bold;" />
     </HBox>
+     <Label text="Total:" />
 
     <HBox spacing="10">
-        <Button text="Vider" onAction="#handleAdd"/>
-        <Button text="Enregistrer" onAction="#handleSave"/>
+        <Button onAction="#handleAdd" text="Vider" />
+        <Button onAction="#handleSave" text="Enregistrer" />
     </HBox>
 </VBox>

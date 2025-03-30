@@ -1,41 +1,46 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="450.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.skynet.javafx.controller.CustomerController">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="554.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.skynet.javafx.controller.CustomerController">
          <children>
-            <TabPane prefHeight="400.0" prefWidth="600.0" tabClosingPolicy="UNAVAILABLE">
+            <TabPane prefHeight="509.0" prefWidth="600.0" tabClosingPolicy="UNAVAILABLE">
               <tabs>
                 <Tab text="Basic">
                   <content>
-                    <AnchorPane prefHeight="334.0" prefWidth="600.0">
+                    <AnchorPane prefHeight="495.0" prefWidth="600.0">
                       <children>
                         <Label layoutX="25.0" layoutY="26.0" text="Type:" />
                         <ComboBox fx:id="comboType" layoutX="92.0" layoutY="21.0" prefHeight="26.0" prefWidth="200.0" />
                         <Label layoutX="25.0" layoutY="77.0" text="Firstname:" />
-                        <TextField fx:id="textFirstname" layoutX="92.0" layoutY="72.0" prefHeight="26.0" prefWidth="478.0" />
+                        <TextField fx:id="textFirstname" layoutX="92.0" layoutY="72.0" prefHeight="26.0" prefWidth="481.0" />
                         <Label layoutX="25.0" layoutY="128.0" text="Lastname:" />
-                        <TextField fx:id="textLastname" layoutX="92.0" layoutY="123.0" prefHeight="26.0" prefWidth="478.0" />
-                        <Label layoutX="26.0" layoutY="180.0" prefHeight="26.0" prefWidth="50.0" text="Address:" />
-                        <TextField fx:id="textAddress" layoutX="95.0" layoutY="180.0" prefHeight="26.0" prefWidth="473.0" />
-                        <Label layoutX="41.0" layoutY="234.0" text="Email:" />
-                        <TextField fx:id="textEmail" layoutX="95.0" layoutY="229.0" prefHeight="26.0" prefWidth="478.0" />
-                        <Label fx:id="labelICE" layoutX="41.0" layoutY="288.0" text="ICE:" visible="false" />
-                        <TextField fx:id="textICE" layoutX="95.0" layoutY="283.0" prefHeight="26.0" prefWidth="478.0" visible="false" />
+                        <TextField fx:id="textLastname" layoutX="92.0" layoutY="123.0" prefHeight="26.0" prefWidth="481.0" />
+                        <Label layoutX="32.0" layoutY="180.0" text="Address:" />
+                        <TextField fx:id="textAddress" layoutX="95.0" layoutY="180.0" prefHeight="26.0" prefWidth="481.0" />
+                        <Label layoutX="35.0" layoutY="234.0" text="Email:" />
+                        <TextField fx:id="textEmail" layoutX="95.0" layoutY="229.0" prefHeight="26.0" prefWidth="481.0" />
+                        <Label layoutX="41.0" layoutY="280.0" text="Tel:" />
+                        <TextField fx:id="telField" layoutX="93.0" layoutY="276.0" prefHeight="25.0" prefWidth="481.0" />
+                        <Label layoutX="28.0" layoutY="320.0" text="Comment:" />
+                        <TextArea fx:id="commentField" layoutX="95.0" layoutY="320.0" prefHeight="101.0" prefWidth="479.0" />
+                        <Label fx:id="labelICE" layoutX="41.0" layoutY="435.0" text="ICE:" visible="false" />
+                        <TextField fx:id="textICE" layoutX="95.0" layoutY="430.0" prefHeight="26.0" prefWidth="478.0" visible="false" />
                       </children>
                     </AnchorPane>
                   </content>
                 </Tab>
               </tabs>
             </TabPane>
-            <Pane nodeOrientation="RIGHT_TO_LEFT" prefHeight="60.0" prefWidth="600.0">
+            <Pane nodeOrientation="RIGHT_TO_LEFT" prefHeight="67.0" prefWidth="600.0">
                <children>
                 <fx:include fx:id="buttonbar" source="buttonbar.fxml" />
                </children>

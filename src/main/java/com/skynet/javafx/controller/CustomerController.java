@@ -11,6 +11,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
 import javafx.stage.FileChooser;
 import java.io.File;
 import java.io.IOException;
@@ -37,6 +38,10 @@ public class CustomerController implements CrudController {
   private TextField textICE;
   @FXML
   private Label labelICE;
+  @FXML
+  private TextArea commentField;
+  @FXML
+  private TextField telField;
 
   @Autowired
   private CustomerService customerService;
@@ -72,6 +77,8 @@ public class CustomerController implements CrudController {
     textICE.setText("");
     textICE.setVisible(false);
     labelICE.setVisible(false);
+    commentField.setText("");
+    telField.setText("");
   }
 
   @Override
@@ -86,6 +93,8 @@ public class CustomerController implements CrudController {
     boolean isEntreprise = "Entreprise".equals(customer.getType());
     textICE.setVisible(isEntreprise);
     labelICE.setVisible(isEntreprise);
+    commentField.setText(customer.getComment());
+    telField.setText(customer.getTel());
   }
 
   @Override
@@ -99,6 +108,8 @@ public class CustomerController implements CrudController {
     customer.setAddress(textAddress.getText());
     customer.setEmail(textEmail.getText());
     customer.setICE(textICE.getText());
+    customer.setComment(commentField.getText());
+    customer.setTel(telField.getText());
     customerService.save(customer);
   }
 }

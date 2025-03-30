@@ -9,10 +9,10 @@ import com.skynet.javafx.views.FactureView;
 public class FactureGridDef implements FrameGridDef {
     
     public static String COLUMN_NAMES[] = 
-        { "N° Facture", "Date", "Montant", "Client", "Status" };
+        { "N° Facture", "Date", "Montant", "Client", "Status","Commentaire" };
     public static String COLUMN_DATA_NAMES[] = 
-        { "numeroFacture", "dateFacture", "montantTotal", "clientName", "status" };  // Changed "client" to "clientName"
-    public static Integer COLUMN_SIZES[] = { 120, 150, 100, 150, 100 };
+        { "numeroFacture", "dateFacture", "montantTotal", "clientName", "status","comment" };  // Changed "client" to "clientName"
+    public static Integer COLUMN_SIZES[] = { 120, 150, 100, 150, 100,300 };
     public static String TITLE_POPUPS = "Gestion des Factures";
 
     @Override
