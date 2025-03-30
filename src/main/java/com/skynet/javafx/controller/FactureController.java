@@ -25,6 +25,8 @@ import java.util.ResourceBundle;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import com.skynet.javafx.model.Product;
 import com.skynet.javafx.model.FactureProduct;
@@ -47,6 +49,11 @@ import javafx.scene.Node;
 import javafx.event.ActionEvent;
 import com.skynet.javafx.model.ProductParameter;
 import javafx.scene.layout.VBox;
+import javafx.application.Platform;
+import javafx.scene.control.ListView;
+import javafx.stage.StageStyle;
+import javafx.scene.Scene;
+import javafx.geometry.Bounds;
 
 @Controller
 @Scope("prototype")
@@ -66,12 +73,8 @@ public class FactureController implements CrudController, Initializable {
     @FXML
     private DatePicker dateFactureField;
     @FXML
-    private ComboBox<Customer> clientComboBox;
-    @FXML
     private ComboBox<String> statusComboBox;
 
-    @FXML
-    private ComboBox<Product> productComboBox;
     @FXML
     private TextField quantityField;
     @FXML
@@ -99,6 +102,22 @@ public class FactureController implements CrudController, Initializable {
     @FXML
     private VBox parametersContainer;
 
+    @FXML
+    private TextField clientTextField;
+    @FXML
+    private TextField productTextField;
+    
+    private ListView<Customer> clientSuggestions;
+    private ListView<Product> productSuggestions;
+    private Stage clientPopup;
+    private Stage productPopup;
+    
+    private Customer selectedClient;
+    private Product selectedProduct;
+    
+    private List<Customer> allCustomers;
+    private List<Product> allProducts;
+
     private Map<String, ComboBox<ParameterValue>> parameterFields = new HashMap<>();
 
     private Facture currentFacture;
@@ -106,8 +125,8 @@ public class FactureController implements CrudController, Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         setupProductsTable();
-        loadProducts();
-        loadCustomers();
+        setupAutoComplete();
+        loadCustomersAndProducts();
         statusComboBox.getItems().addAll("NOUVEAU", "EN_COURS", "PAYEE", "ANNULEE");
         totalLabel.setText("0.00 MAD");
 
@@ -115,12 +134,6 @@ public class FactureController implements CrudController, Initializable {
         quantityField.textProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue.matches("\\d*")) {
                 quantityField.setText(newValue.replaceAll("[^\\d]", ""));
-            }
-        });
-
-        productComboBox.valueProperty().addListener((obs, oldVal, newVal) -> {
-            if (newVal != null) {
-                updateParameterFields(newVal);
             }
         });
     }
@@ -152,39 +165,6 @@ public class FactureController implements CrudController, Initializable {
         });
     }
 
-    private void loadProducts() {
-        ArrayList<Product> products = new ArrayList<Product>();
-        productRepository.findAll().forEach(products::add);
-        productComboBox.setItems(FXCollections.observableArrayList(products));
-        productComboBox.setConverter(new javafx.util.StringConverter<Product>() { 
-            @Override
-            public String toString(Product product) {
-                return product != null ? product.getName() : "";
-            }
-            @Override
-            public Product fromString(String string) {
-                return null;
-            }
-        });
-    
-    }
-
-    private void loadCustomers() {
-        ArrayList<Customer> customers = new ArrayList<Customer>();
-        customerRepository.findAll().forEach(customers::add);
-        clientComboBox.setItems(FXCollections.observableArrayList(customers));
-        clientComboBox.setConverter(new javafx.util.StringConverter<Customer>() {
-            @Override
-            public String toString(Customer customer) {
-                return customer != null ? customer.getFirstname() + " " + customer.getLastname() : "";
-            }
-            @Override
-            public Customer fromString(String string) {
-                return null;
-            }
-        });
-    }
-
     @FXML
     private void handleSave(ActionEvent event) {
         save();
@@ -201,7 +181,6 @@ public class FactureController implements CrudController, Initializable {
 
     @FXML
     private void handleAddProduct() {
-        Product selectedProduct = productComboBox.getValue();
         if (selectedProduct == null) return;
 
         Map<String, ParameterValue> selectedParameters = new HashMap<>();
@@ -281,7 +260,11 @@ public class FactureController implements CrudController, Initializable {
         if (currentFacture != null) {
             numeroFactureField.setText(currentFacture.getNumeroFacture());
             dateFactureField.setValue(currentFacture.getDateFacture().toLocalDate());
-            clientComboBox.setValue(currentFacture.getClient());
+            if (currentFacture.getClient() != null) {
+                Customer client = currentFacture.getClient();
+                clientTextField.setText(client.getFirstname() + " " + client.getLastname());
+                selectedClient = client;
+            }
             statusComboBox.setValue(currentFacture.getStatus());
             commentField.setText(currentFacture.getComment());
             isArchivedCheckBox.setSelected(currentFacture.isArchived());
@@ -294,7 +277,7 @@ public class FactureController implements CrudController, Initializable {
             currentFacture.setNumeroFacture(numeroFactureField.getText());
             currentFacture
                     .setDateFacture(LocalDateTime.of(dateFactureField.getValue(), LocalDateTime.now().toLocalTime()));
-            currentFacture.setClient(clientComboBox.getValue());
+            currentFacture.setClient(selectedClient);
             currentFacture.setStatus(statusComboBox.getValue());
             currentFacture.setComment(commentField.getText());
             currentFacture.setArchived(isArchivedCheckBox.isSelected());
@@ -305,7 +288,7 @@ public class FactureController implements CrudController, Initializable {
     private void clearFields() {
         numeroFactureField.clear();
         dateFactureField.setValue(null);
-        clientComboBox.setValue(null);
+        clientTextField.clear();
         statusComboBox.setValue(null);
         commentField.clear();
         isArchivedCheckBox.setSelected(false);
@@ -316,8 +299,10 @@ public class FactureController implements CrudController, Initializable {
     }
 
     private void clearProductFields() {
-        productComboBox.setValue(null);
+        productTextField.clear();
+        selectedProduct = null;
         quantityField.clear();
+        parametersContainer.getChildren().clear();
     }
 
     private void updateProductsTable() {
@@ -361,6 +346,259 @@ public class FactureController implements CrudController, Initializable {
             parameterFields.put(param.getName(), paramField);
             parametersContainer.getChildren().add(paramField);
         }
+    }
+
+    private void setupAutoComplete() {
+        // Delay setup until JavaFX is ready
+        Platform.runLater(() -> {
+            setupClientAutoComplete();
+            setupProductAutoComplete();
+        });
+    }
+    
+    private void setupClientAutoComplete() {
+        clientSuggestions = new ListView<>();
+        clientSuggestions.setPrefWidth(200);
+        clientSuggestions.setPrefHeight(200);
+        clientSuggestions.setStyle("-fx-border-color: #999999; -fx-border-width: 1; -fx-background-color: white;");
+        
+        clientPopup = new Stage(StageStyle.UNDECORATED);
+        Scene scene = new Scene(clientSuggestions);
+        clientPopup.setScene(scene);
+        
+        clientTextField.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (clientTextField.getScene() == null) return;
+            
+            // Store caret position
+            int caretPosition = clientTextField.getCaretPosition();
+            
+            if (clientPopup.getOwner() == null) {
+                clientPopup.initOwner(clientTextField.getScene().getWindow());
+            }
+            
+            if (newValue != null && !newValue.isEmpty() && !newValue.equals(oldValue)) {
+                String search = newValue.toLowerCase();
+                List<Customer> matches = allCustomers.stream()
+                    .filter(c -> (c.getFirstname() + " " + c.getLastname()).toLowerCase().contains(search))
+                    .collect(Collectors.toList());
+                
+                clientSuggestions.setItems(FXCollections.observableArrayList(matches));
+                clientSuggestions.setCellFactory(lv -> new ListCell<Customer>() {
+                    @Override
+                    protected void updateItem(Customer item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (empty || item == null) {
+                            setText(null);
+                        } else {
+                            setText(item.getFirstname() + " " + item.getLastname());
+                        }
+                    }
+                });
+                
+                if (!matches.isEmpty() && !clientPopup.isShowing()) {
+                    Bounds bounds = clientTextField.localToScreen(clientTextField.getBoundsInLocal());
+                    clientPopup.setX(bounds.getMinX());
+                    clientPopup.setY(bounds.getMaxY());
+                    clientPopup.show();
+                    // Restore focus and caret
+                    clientTextField.requestFocus();
+                    clientTextField.positionCaret(caretPosition);
+                } else if (matches.isEmpty()) {
+                    clientPopup.hide();
+                }
+            } else {
+                clientPopup.hide();
+            }
+        });
+        
+        // Add keyboard navigation
+        clientTextField.setOnKeyPressed(e -> {
+            if (clientPopup.isShowing()) {
+                switch (e.getCode()) {
+                    case DOWN:
+                        clientSuggestions.requestFocus();
+                        clientSuggestions.getSelectionModel().selectFirst();
+                        e.consume();
+                        break;
+                    case ENTER:
+                        Customer selected = clientSuggestions.getSelectionModel().getSelectedItem();
+                        if (selected != null) {
+                            selectCustomer(selected);
+                        }
+                        e.consume();
+                        break;
+                    case ESCAPE:
+                        clientPopup.hide();
+                        e.consume();
+                        break;
+                    default:
+                        break;
+                }
+            }
+        });
+        
+        clientSuggestions.setOnKeyPressed(e -> {
+            switch (e.getCode()) {
+                case ENTER:
+                    Customer selected = clientSuggestions.getSelectionModel().getSelectedItem();
+                    if (selected != null) {
+                        selectCustomer(selected);
+                    }
+                    e.consume();
+                    break;
+                case ESCAPE:
+                    clientPopup.hide();
+                    clientTextField.requestFocus();
+                    e.consume();
+                    break;
+                default:
+                    break;
+            }
+        });
+
+        // Move selection logic to separate method
+        clientSuggestions.setOnMouseClicked(e -> {
+            Customer selected = clientSuggestions.getSelectionModel().getSelectedItem();
+            if (selected != null) {
+                selectCustomer(selected);
+            }
+        });
+    }
+    
+    private void selectCustomer(Customer customer) {
+        selectedClient = customer;
+        String text = customer.getFirstname() + " " + customer.getLastname();
+        clientTextField.setText(text);
+        clientTextField.positionCaret(text.length());
+        clientTextField.requestFocus();
+        clientPopup.hide();
+    }
+    
+    private void setupProductAutoComplete() {
+        productSuggestions = new ListView<>();
+        productSuggestions.setPrefWidth(200);
+        productSuggestions.setPrefHeight(200);
+        productSuggestions.setStyle("-fx-border-color: #999999; -fx-border-width: 1; -fx-background-color: white;");
+        
+        productPopup = new Stage(StageStyle.UNDECORATED);
+        Scene scene = new Scene(productSuggestions);
+        productPopup.setScene(scene);
+        
+        productTextField.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (productTextField.getScene() == null) return;
+            
+            // Store caret position
+            int caretPosition = productTextField.getCaretPosition();
+            
+            if (productPopup.getOwner() == null) {
+                productPopup.initOwner(productTextField.getScene().getWindow());
+            }
+            
+            if (newValue != null && !newValue.isEmpty() && !newValue.equals(oldValue)) {
+                String search = newValue.toLowerCase();
+                List<Product> matches = allProducts.stream()
+                    .filter(p -> p.getName().toLowerCase().contains(search))
+                    .collect(Collectors.toList());
+                
+                productSuggestions.setItems(FXCollections.observableArrayList(matches));
+                productSuggestions.setCellFactory(lv -> new ListCell<Product>() {
+                    @Override
+                    protected void updateItem(Product item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (empty || item == null) {
+                            setText(null);
+                        } else {
+                            setText(item.getName());
+                        }
+                    }
+                });
+                
+                if (!matches.isEmpty() && !productPopup.isShowing()) {
+                    Bounds bounds = productTextField.localToScreen(productTextField.getBoundsInLocal());
+                    productPopup.setX(bounds.getMinX());
+                    productPopup.setY(bounds.getMaxY());
+                    productPopup.show();
+                    // Restore focus and caret
+                    productTextField.requestFocus();
+                    productTextField.positionCaret(caretPosition);
+                } else if (matches.isEmpty()) {
+                    productPopup.hide();
+                }
+            } else {
+                productPopup.hide();
+            }
+        });
+        
+        // Add keyboard navigation
+        productTextField.setOnKeyPressed(e -> {
+            if (productPopup.isShowing()) {
+                switch (e.getCode()) {
+                    case DOWN:
+                        productSuggestions.requestFocus();
+                        productSuggestions.getSelectionModel().selectFirst();
+                        e.consume();
+                        break;
+                    case ENTER:
+                        Product selected = productSuggestions.getSelectionModel().getSelectedItem();
+                        if (selected != null) {
+                            selectProduct(selected);
+                        }
+                        e.consume();
+                        break;
+                    case ESCAPE:
+                        productPopup.hide();
+                        e.consume();
+                        break;
+                    default:
+                        break;
+                }
+            }
+        });
+        
+        productSuggestions.setOnKeyPressed(e -> {
+            switch (e.getCode()) {
+                case ENTER:
+                    Product selected = productSuggestions.getSelectionModel().getSelectedItem();
+                    if (selected != null) {
+                        selectProduct(selected);
+                    }
+                    e.consume();
+                    break;
+                case ESCAPE:
+                    productPopup.hide();
+                    productTextField.requestFocus();
+                    e.consume();
+                    break;
+                default:
+                    break;
+            }
+        });
+
+        // Move selection logic to separate method
+        productSuggestions.setOnMouseClicked(e -> {
+            Product selected = productSuggestions.getSelectionModel().getSelectedItem();
+            if (selected != null) {
+                selectProduct(selected);
+            }
+        });
+    }
+    
+    private void selectProduct(Product product) {
+        selectedProduct = product;
+        String text = product.getName();
+        productTextField.setText(text);
+        productTextField.positionCaret(text.length());
+        productTextField.requestFocus();
+        updateParameterFields(product);
+        productPopup.hide();
+    }
+
+    private void loadCustomersAndProducts() {
+        allCustomers = new ArrayList<>();
+        customerRepository.findAll().forEach(allCustomers::add);
+        
+        allProducts = new ArrayList<>();
+        productRepository.findAll().forEach(allProducts::add);
     }
 
     // Additional helper methods

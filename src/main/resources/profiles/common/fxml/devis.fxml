@@ -30,7 +30,7 @@
         <DatePicker fx:id="dateDevisField" prefHeight="25.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
 
         <Label text="Client" GridPane.columnIndex="0" GridPane.rowIndex="2" />
-        <ComboBox fx:id="clientComboBox" prefWidth="200" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+        <TextField fx:id="clientTextField" prefWidth="200" GridPane.columnIndex="1" GridPane.rowIndex="2" />
 
         <Label text="Status" GridPane.columnIndex="0" GridPane.rowIndex="3" />
         <ComboBox fx:id="statusComboBox" GridPane.columnIndex="1" GridPane.rowIndex="3" />
@@ -53,7 +53,7 @@
     <TitledPane expanded="true" text="Ajouter Produit">
         <VBox spacing="10">
             <HBox alignment="CENTER_LEFT" spacing="10">
-                <ComboBox fx:id="productComboBox" prefWidth="200" promptText="Select Product" />
+                <TextField fx:id="productTextField" prefWidth="200" promptText="Select Product" />
             </HBox>
             <!-- Parameters Container -->
             <VBox fx:id="parametersContainer" spacing="5" />

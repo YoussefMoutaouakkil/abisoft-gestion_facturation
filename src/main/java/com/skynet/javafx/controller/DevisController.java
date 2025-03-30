@@ -8,6 +8,7 @@ import com.skynet.javafx.service.CustomerService;
 import com.skynet.javafx.service.ProductService;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,10 @@ import javafx.scene.layout.Pane;
 import javafx.application.Platform;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.scene.control.ListView;
+import javafx.stage.StageStyle;
+import javafx.geometry.Bounds;
+import java.util.stream.Collectors;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -29,6 +34,8 @@ import java.io.IOException;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -71,6 +78,21 @@ public class DevisController implements CrudController {
     private ButtonBarController buttonbarController;
     @FXML
     private TextArea commentField;
+    @FXML
+    private TextField clientTextField;
+    @FXML
+    private TextField productTextField;
+
+    private ListView<Customer> clientSuggestions;
+    private ListView<Product> productSuggestions;
+    private Stage clientPopup;
+    private Stage productPopup;
+
+    private Customer selectedClient;
+    private Product selectedProduct;
+
+    private List<Customer> allCustomers;
+    private List<Product> allProducts;
 
     @Autowired
     private DevisService devisService;
@@ -87,8 +109,10 @@ public class DevisController implements CrudController {
     @FXML
     private void initialize() {
         try {
-            setupComboBoxes();
             setupTable();
+            setupAutoComplete();
+            loadCustomersAndProducts();
+            statusComboBox.getItems().addAll("En cours", "Validé", "Annulé");
             initializeDevisProducts();
 
             Platform.runLater(() -> {
@@ -109,39 +133,164 @@ public class DevisController implements CrudController {
         }
     }
 
-    private void setupComboBoxes() {
-        // Setup client combo box
-        clientComboBox.setItems(FXCollections.observableArrayList(customerService.getAllCustomers()));
-        clientComboBox.setCellFactory(param -> new ListCell<Customer>() {
+    private void loadCustomersAndProducts() {
+        allCustomers = new ArrayList<>();
+        customerService.getAllCustomers().forEach(allCustomers::add);
+        
+        allProducts = new ArrayList<>();
+        productService.getData().forEach(allProducts::add);
+    }
+
+    private void setupAutoComplete() {
+        Platform.runLater(() -> {
+            setupClientAutoComplete();
+            setupProductAutoComplete();
+        });
+    }
+
+    private void setupClientAutoComplete() {
+        clientSuggestions = new ListView<>();
+        clientPopup = new Stage(StageStyle.UNDECORATED);
+        clientSuggestions.setPrefWidth(200);
+        clientSuggestions.setPrefHeight(200);
+        clientSuggestions.setStyle("-fx-border-color: #999999; -fx-border-width: 1; -fx-background-color: white;");
+        Scene scene = new Scene(clientSuggestions);
+        clientPopup.setScene(scene);
+        
+        clientTextField.textProperty().addListener((obs, oldText, newText) -> {
+            if (clientTextField.getScene() == null) return;
+            
+            if (clientPopup.getOwner() == null) {
+                clientPopup.initOwner(clientTextField.getScene().getWindow());
+            }
+            
+            if (newText == null || newText.isEmpty()) {
+                clientPopup.hide();
+                return;
+            }
+
+            String search = newText.toLowerCase();
+            List<Customer> matches = allCustomers.stream()
+                    .filter(c -> (c.getFirstname() + " " + c.getLastname()).toLowerCase().contains(search))
+                    .collect(Collectors.toList());
+                    
+            clientSuggestions.setItems(FXCollections.observableArrayList(matches));
+            
+            if (!matches.isEmpty()) {
+                Bounds bounds = clientTextField.localToScreen(clientTextField.getBoundsInLocal());
+                clientPopup.setX(bounds.getMinX());
+                clientPopup.setY(bounds.getMaxY());
+                if (!clientPopup.isShowing()) {
+                    clientPopup.show();
+                }
+            } else {
+                clientPopup.hide();
+            }
+        });
+
+        // Add cell factory for client suggestions
+        clientSuggestions.setCellFactory(lv -> new ListCell<Customer>() {
             @Override
-            protected void updateItem(Customer customer, boolean empty) {
-                super.updateItem(customer, empty);
-                if (empty || customer == null) {
+            protected void updateItem(Customer item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
                     setText(null);
                 } else {
-                    setText(customer.getFirstname() + " " + customer.getLastname());
+                    setText(item.getFirstname() + " " + item.getLastname());
                 }
             }
         });
-        clientComboBox.setButtonCell(clientComboBox.getCellFactory().call(null));
 
-        // Setup status combo box
-        statusComboBox.setItems(FXCollections.observableArrayList("En cours", "Validé", "Annulé"));
+        clientSuggestions.setOnMouseClicked(event -> {
+            Customer selected = clientSuggestions.getSelectionModel().getSelectedItem();
+            if (selected != null) {
+                selectCustomer(selected);
+            }
+        });
+    }
 
-        // Setup product combo box
-        productComboBox.setItems(FXCollections.observableArrayList(productService.getData()));
-        productComboBox.setCellFactory(param -> new ListCell<Product>() {
+    private void setupProductAutoComplete() {
+        productSuggestions = new ListView<>();
+        productPopup = new Stage(StageStyle.UNDECORATED);
+        productSuggestions.setPrefWidth(200);
+        productSuggestions.setPrefHeight(200);
+        productSuggestions.setStyle("-fx-border-color: #999999; -fx-border-width: 1; -fx-background-color: white;");
+        Scene scene = new Scene(productSuggestions);
+        productPopup.setScene(scene);
+        
+        productTextField.textProperty().addListener((obs, oldText, newText) -> {
+            if (productTextField.getScene() == null) return;
+            
+            if (productPopup.getOwner() == null) {
+                productPopup.initOwner(productTextField.getScene().getWindow());
+            }
+            
+            if (newText == null || newText.isEmpty()) {
+                productPopup.hide();
+                return;
+            }
+
+            String search = newText.toLowerCase();
+            List<Product> matches = allProducts.stream()
+                    .filter(p -> p.getName().toLowerCase().contains(search))
+                    .collect(Collectors.toList());
+                    
+            productSuggestions.setItems(FXCollections.observableArrayList(matches));
+            
+            if (!matches.isEmpty()) {
+                Bounds bounds = productTextField.localToScreen(productTextField.getBoundsInLocal());
+                productPopup.setX(bounds.getMinX());
+                productPopup.setY(bounds.getMaxY());
+                if (!productPopup.isShowing()) {
+                    productPopup.show();
+                }
+            } else {
+                productPopup.hide();
+            }
+        });
+
+        // Add cell factory for product suggestions
+        productSuggestions.setCellFactory(lv -> new ListCell<Product>() {
             @Override
-            protected void updateItem(Product product, boolean empty) {
-                super.updateItem(product, empty);
-                if (empty || product == null) {
+            protected void updateItem(Product item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
                     setText(null);
                 } else {
-                    setText(product.getName());
+                    setText(item.getName());
                 }
             }
         });
-        productComboBox.setButtonCell(productComboBox.getCellFactory().call(null));
+
+        productSuggestions.setOnMouseClicked(event -> {
+            Product selected = productSuggestions.getSelectionModel().getSelectedItem();
+            if (selected != null) {
+                selectProduct(selected);
+            }
+        });
+    }
+
+    private void selectCustomer(Customer customer) {
+        Platform.runLater(() -> {
+            selectedClient = customer;
+            String text = customer.getFirstname() + " " + customer.getLastname();
+            clientTextField.setText(text);
+            clientTextField.positionCaret(text.length());
+            clientTextField.requestFocus();
+            clientPopup.hide();
+        });
+    }
+
+    private void selectProduct(Product product) {
+        Platform.runLater(() -> {
+            selectedProduct = product;
+            String text = product.getName();
+            productTextField.setText(text);
+            productTextField.positionCaret(text.length());
+            productTextField.requestFocus();
+            updateParameterFields(product);
+            productPopup.hide();
+        });
     }
 
     private void setupTable() {
@@ -194,7 +343,6 @@ public class DevisController implements CrudController {
 
     @FXML
     private void handleAddProduct() {
-        Product selectedProduct = productComboBox.getValue();
         if (selectedProduct != null && !quantityField.getText().isEmpty()) {
             try {
                 int quantity = Integer.parseInt(quantityField.getText());
@@ -249,7 +397,11 @@ public class DevisController implements CrudController {
             currentDevis = (Devis) entity;
             numeroDevisField.setText(currentDevis.getNumeroDevis());
             dateDevisField.setValue(currentDevis.getDateDevis().toLocalDate());
-            clientComboBox.setValue(currentDevis.getClient());
+            if (currentDevis.getClient() != null) {
+                Customer client = currentDevis.getClient();
+                clientTextField.setText(client.getFirstname() + " " + client.getLastname());
+                selectedClient = client;
+            }
             statusComboBox.setValue(currentDevis.getStatus());
             devisProducts.setAll(currentDevis.getProducts());
             commentField.setText(currentDevis.getComment());
@@ -271,7 +423,7 @@ public class DevisController implements CrudController {
     }
 
     private boolean validateInputs() {
-        if (clientComboBox.getValue() == null) {
+        if (selectedClient == null) {
             showError("Veuillez sélectionner un client");
             return false;
         }
@@ -287,7 +439,7 @@ public class DevisController implements CrudController {
     }
 
     private void updateDevisFromInputs() {
-        currentDevis.setClient(clientComboBox.getValue());
+        currentDevis.setClient(selectedClient);
         currentDevis.setDateDevis(LocalDateTime.now());
         currentDevis.setStatus(statusComboBox.getValue());
         currentDevis.getProducts().clear();
@@ -296,7 +448,8 @@ public class DevisController implements CrudController {
     }
 
     private void clearProductInputs() {
-        productComboBox.setValue(null);
+        productTextField.clear();
+        selectedProduct = null;
         quantityField.clear();
         parametersContainer.getChildren().clear();
     }
@@ -347,6 +500,33 @@ public class DevisController implements CrudController {
         Node source = (Node) event.getSource();
         Stage stage = (Stage) source.getScene().getWindow();
         stage.close();
+    }
+
+    private void updateParameterFields(Product product) {
+        parametersContainer.getChildren().clear();
+        for (ProductParameter param : product.getParameters()) {
+            ComboBox<ParameterValue> paramField = new ComboBox<>();
+            paramField.setPromptText(param.getName());
+            paramField.setPrefWidth(150);
+            
+            paramField.setItems(FXCollections.observableArrayList(param.getValues()));
+            
+            // Disable values with zero stock
+            paramField.setCellFactory(lv -> new ListCell<ParameterValue>() {
+                @Override
+                protected void updateItem(ParameterValue item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (empty || item == null) {
+                        setText(null);
+                    } else {
+                        setText(item.getValue() + " (Stock: " + item.getStockQuantity() + ")");
+                        setDisable(item.getStockQuantity() <= 0);
+                    }
+                }
+            });
+            
+            parametersContainer.getChildren().add(paramField);
+        }
     }
 
 }
