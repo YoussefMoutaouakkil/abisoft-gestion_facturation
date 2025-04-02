@@ -119,6 +119,6 @@ public class Devis extends SimpleEntity {
     }
     // getClientName
     public String getClientName() {
-        return client != null ? client.getFirstname() + " " + client.getLastname() : "";
+        return client != null ? client.getName() : "";
     }
 }

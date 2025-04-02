@@ -35,9 +35,9 @@
 
         <Label text="Status" GridPane.rowIndex="3" />
         <ComboBox fx:id="statusComboBox" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-      <CheckBox mnemonicParsing="false" fx:id="isArchivedCheckBox" text="Archiver" GridPane.columnIndex="2" GridPane.rowIndex="3" />
-      <Label text="Commentaire"  GridPane.rowIndex="4" />
-      <TextArea prefHeight="80.0" fx:id="commentField" prefWidth="378.0" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+      <CheckBox fx:id="isArchivedCheckBox" mnemonicParsing="false" text="Archiver" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+      <Label text="Commentaire" GridPane.rowIndex="4" />
+      <TextArea fx:id="commentField" prefHeight="80.0" prefWidth="378.0" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="4" />
       <columnConstraints>
          <ColumnConstraints />
          <ColumnConstraints />
@@ -81,9 +81,9 @@
 
     <!-- Total and Actions -->
     <HBox alignment="CENTER_RIGHT" spacing="20">
+        <Label text="Total:" />
         <Label fx:id="totalLabel" style="-fx-font-weight: bold;" />
     </HBox>
-     <Label text="Total:" />
 
     <HBox spacing="10">
         <Button onAction="#handleAdd" text="Vider" />

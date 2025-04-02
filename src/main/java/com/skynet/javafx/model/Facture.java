@@ -75,7 +75,7 @@ public class Facture extends SimpleEntity{
     }
     
     public String getClientName() {
-        return client != null ? client.getFirstname() + " " + client.getLastname() : "";
+        return client != null ? client.getName() : "";
     }
     public boolean isArchived() {
         return isArchived;

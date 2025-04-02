@@ -25,9 +25,7 @@ public class CustomerController implements CrudController {
   private ButtonBarController buttonbarController;
 
   @FXML
-  private TextField textFirstname;
-  @FXML
-  private TextField textLastname;
+  private TextField textName;
   @FXML
   private TextField textAddress;
   @FXML
@@ -70,8 +68,7 @@ public class CustomerController implements CrudController {
     // empty form
     customer = null;
     comboType.setValue("Personne Physique");
-    textFirstname.setText("");
-    textLastname.setText("");
+    textName.setText("");
     textAddress.setText("");
     textEmail.setText("");
     textICE.setText("");
@@ -85,8 +82,7 @@ public class CustomerController implements CrudController {
   public void render(SimpleEntity entity) {
     customer = (Customer) entity;
     comboType.setValue(customer.getType());
-    textFirstname.setText(customer.getFirstname());
-    textLastname.setText(customer.getLastname());
+    textName.setText(customer.getName());
     textAddress.setText(customer.getAddress());
     textEmail.setText(customer.getEmail());
     textICE.setText(customer.getICE());
@@ -103,8 +99,7 @@ public class CustomerController implements CrudController {
       customer = new Customer();
     }
     customer.setType(comboType.getValue());
-    customer.setFirstname(textFirstname.getText());
-    customer.setLastname(textLastname.getText());
+    customer.setName(textName.getText());
     customer.setAddress(textAddress.getText());
     customer.setEmail(textEmail.getText());
     customer.setICE(textICE.getText());

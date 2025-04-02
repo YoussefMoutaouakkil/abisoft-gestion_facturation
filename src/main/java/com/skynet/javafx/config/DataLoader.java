@@ -86,8 +86,10 @@ public class DataLoader implements CommandLineRunner {
             
             Customer customer = new Customer();
             customer.setId(1L);
-            customer.setFirstname("soufyane");
-            customer.setLastname("majdoub");
+            // customer.setFirstname("soufyane");
+            // customer.setLastname("majdoub");
+            customer.setType("Personne Physique");
+            customer.setName("Soufyane Majdoub");
             customer.setAddress("Narjis");
             customer.setEmail("soufyanemajdoub@gmail.com");
             customerRepository.save(customer);

@@ -56,7 +56,7 @@ public class CustomerService extends AbstractExcelExporter implements FrameServi
 
     @Override
     public List<String> getHeaders() {
-        return Arrays.asList("ID", "Type", "Firstname", "Lastname", "Address", "Email", "ICE");
+        return Arrays.asList("ID", "Type", "Name", "Address", "Email", "ICE");
     }
 
     @Override
@@ -68,8 +68,7 @@ public class CustomerService extends AbstractExcelExporter implements FrameServi
             Map<String, Object> row = new HashMap<>();
             row.put("ID", customer.getId());
             row.put("Type", customer.getType());
-            row.put("Firstname", customer.getFirstname());
-            row.put("Lastname", customer.getLastname());
+            row.put("Name", customer.getName());
             row.put("Address", customer.getAddress());
             row.put("Email", customer.getEmail());
             row.put("ICE", customer.getICE());

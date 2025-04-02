@@ -262,7 +262,7 @@ public class FactureController implements CrudController, Initializable {
             dateFactureField.setValue(currentFacture.getDateFacture().toLocalDate());
             if (currentFacture.getClient() != null) {
                 Customer client = currentFacture.getClient();
-                clientTextField.setText(client.getFirstname() + " " + client.getLastname());
+                clientTextField.setText(client.getName());
                 selectedClient = client;
             }
             statusComboBox.setValue(currentFacture.getStatus());
@@ -379,7 +379,7 @@ public class FactureController implements CrudController, Initializable {
             if (newValue != null && !newValue.isEmpty() && !newValue.equals(oldValue)) {
                 String search = newValue.toLowerCase();
                 List<Customer> matches = allCustomers.stream()
-                    .filter(c -> (c.getFirstname() + " " + c.getLastname()).toLowerCase().contains(search))
+                    .filter(c -> (c.getName()).toLowerCase().contains(search))
                     .collect(Collectors.toList());
                 
                 clientSuggestions.setItems(FXCollections.observableArrayList(matches));
@@ -390,7 +390,7 @@ public class FactureController implements CrudController, Initializable {
                         if (empty || item == null) {
                             setText(null);
                         } else {
-                            setText(item.getFirstname() + " " + item.getLastname());
+                            setText(item.getName());
                         }
                     }
                 });
@@ -467,7 +467,7 @@ public class FactureController implements CrudController, Initializable {
     
     private void selectCustomer(Customer customer) {
         selectedClient = customer;
-        String text = customer.getFirstname() + " " + customer.getLastname();
+        String text = customer.getName();
         clientTextField.setText(text);
         clientTextField.positionCaret(text.length());
         clientTextField.requestFocus();

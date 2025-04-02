@@ -171,7 +171,7 @@ public class DevisController implements CrudController {
 
             String search = newText.toLowerCase();
             List<Customer> matches = allCustomers.stream()
-                    .filter(c -> (c.getFirstname() + " " + c.getLastname()).toLowerCase().contains(search))
+                    .filter(c -> (c.getName()).toLowerCase().contains(search))
                     .collect(Collectors.toList());
                     
             clientSuggestions.setItems(FXCollections.observableArrayList(matches));
@@ -196,7 +196,7 @@ public class DevisController implements CrudController {
                 if (empty || item == null) {
                     setText(null);
                 } else {
-                    setText(item.getFirstname() + " " + item.getLastname());
+                    setText(item.getName());
                 }
             }
         });
@@ -273,7 +273,7 @@ public class DevisController implements CrudController {
     private void selectCustomer(Customer customer) {
         Platform.runLater(() -> {
             selectedClient = customer;
-            String text = customer.getFirstname() + " " + customer.getLastname();
+            String text =customer.getName();
             clientTextField.setText(text);
             clientTextField.positionCaret(text.length());
             clientTextField.requestFocus();
@@ -399,7 +399,7 @@ public class DevisController implements CrudController {
             dateDevisField.setValue(currentDevis.getDateDevis().toLocalDate());
             if (currentDevis.getClient() != null) {
                 Customer client = currentDevis.getClient();
-                clientTextField.setText(client.getFirstname() + " " + client.getLastname());
+                clientTextField.setText(client.getName());
                 selectedClient = client;
             }
             statusComboBox.setValue(currentDevis.getStatus());

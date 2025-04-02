@@ -15,6 +15,7 @@ import com.skynet.javafx.service.CustomerService;
 import com.skynet.javafx.service.ProductService;
 
 import javafx.fxml.FXML;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 
 @FXMLController
@@ -30,7 +31,9 @@ public class CategoryController implements CrudController {
   @FXML
   private TextField nameColumn;
   @FXML
-  private TextField descriptionColumn;
+  private TextArea descriptionColumn;
+  @FXML
+  private TextArea commentColumn;
 
 
   @Autowired
@@ -55,6 +58,7 @@ public class CategoryController implements CrudController {
     category = (Category) entity;
     nameColumn.setText(category.getName());
     descriptionColumn.setText(category.getDescription());
+    commentColumn.setText(category.getComment());
   }
 
   @Override
@@ -64,6 +68,7 @@ public class CategoryController implements CrudController {
     }
     category.setName(nameColumn.getText());
     category.setDescription(descriptionColumn.getText());
+    category.setComment(commentColumn.getText());
     categoryService.save(category);
   }
 }
