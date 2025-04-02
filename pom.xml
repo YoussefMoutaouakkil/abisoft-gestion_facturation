@@ -150,6 +150,12 @@
 			<version>2.0.27</version> <!-- Use the latest version -->
 		</dependency>
 		
+		<!-- Apache Commons BeanUtils -->
+		<dependency>
+			<groupId>commons-beanutils</groupId>
+			<artifactId>commons-beanutils</artifactId>
+			<version>1.9.4</version>
+		</dependency>
 		
 	</dependencies>
 
