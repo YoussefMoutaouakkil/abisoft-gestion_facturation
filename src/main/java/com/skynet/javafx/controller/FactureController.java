@@ -329,7 +329,7 @@ public class FactureController implements CrudController, Initializable {
             
             paramField.setItems(FXCollections.observableArrayList(param.getValues()));
             
-            // Disable values with zero stock
+            // Disable values with zero stock and select first available value
             paramField.setCellFactory(lv -> new ListCell<ParameterValue>() {
                 @Override
                 protected void updateItem(ParameterValue item, boolean empty) {
@@ -342,6 +342,12 @@ public class FactureController implements CrudController, Initializable {
                     }
                 }
             });
+            
+            // Select first available value with stock
+            param.getValues().stream()
+                .filter(value -> value.getStockQuantity() > 0)
+                .findFirst()
+                .ifPresent(paramField::setValue);
             
             parameterFields.put(param.getName(), paramField);
             parametersContainer.getChildren().add(paramField);
