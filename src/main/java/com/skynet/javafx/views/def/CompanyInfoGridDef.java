@@ -26,17 +26,17 @@ public class CompanyInfoGridDef implements FrameGridDef {
 
     @Override
     public List<String> getColumnNames() {
-        return Arrays.asList("Raison Sociale", "Adresse","Telephone");
+        return Arrays.asList("Raison Sociale", "Adresse","Telephone","ICE","RC");
     }
 
     @Override
     public List<String> getColumnDataName() {
-        return Arrays.asList("raisonSociale", "adresse","telephone");
+        return Arrays.asList("raisonSociale", "adresse","telephone","ice","rc");
     }
 
     @Override
     public List<Integer> getColumnSizes() {
-        return Arrays.asList(200, 300, 200);
+        return Arrays.asList(200, 300, 200, 200, 200);
     }
 
     @Override

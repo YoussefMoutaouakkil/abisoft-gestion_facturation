@@ -31,6 +31,8 @@ public class CompanyInfoView extends AbstractFxmlView {
     @FXML private Button logoButton;
     @FXML private ImageView logoPreview;
     @FXML private TextField phoneField;
+    @FXML private TextField iceField;
+    @FXML private TextField rcField;
     
     private File selectedLogoFile;
     
@@ -71,6 +73,8 @@ public class CompanyInfoView extends AbstractFxmlView {
         info.setRaisonSociale(raisonSocialeField.getText());
         info.setAdresse(adresseField.getText());
         info.setTelephone(phoneField.getText());
+        info.setIce(iceField.getText());
+        info.setRc(rcField.getText());
         
         // Handle logo file if selected
         if (selectedLogoFile != null) {

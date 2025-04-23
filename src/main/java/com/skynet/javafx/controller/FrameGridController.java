@@ -18,6 +18,7 @@ import com.skynet.javafx.model.Facture;
 import com.skynet.javafx.model.SimpleEntity;
 import com.skynet.javafx.service.CompanyInfoService;
 import com.skynet.javafx.service.CustomerService;
+import com.skynet.javafx.service.DevisService;
 import com.skynet.javafx.service.ExcelExportable;
 import com.skynet.javafx.service.FactureService;
 import com.skynet.javafx.service.FrameService;
@@ -91,12 +92,20 @@ public class FrameGridController implements PrototypeController {
 	@Autowired
 	private  CompanyInfoService companyInfoService;
 
+	private boolean isPrintablePage() {
+		if (frameService instanceof FactureService || frameService instanceof DevisService) {
+			return true;
+		}
+		return false;
+	}
+
 	@FXML
 	private void initialize() {
 		editButton.setDisable(true);
 		deleteButton.setDisable(true);
 		printButton.setDisable(true);
 		exportButton.setDisable(false); // Changed from printButton
+		printButton.setVisible(false); // Hide by default
 		addButton.setOnAction((event) -> {
 			addButtonHandleAction();
 		});
@@ -177,6 +186,7 @@ public class FrameGridController implements PrototypeController {
 	public void initializeGrid(FrameService frameService, FrameGridDef gridDef) {
 		this.frameService = frameService;
 		this.gridDef = gridDef;
+		printButton.setVisible(isPrintablePage()); // Show only for printable pages
 		setupGrid();
 		loadData();
 	}

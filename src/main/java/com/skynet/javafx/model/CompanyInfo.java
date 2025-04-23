@@ -13,6 +13,8 @@ import lombok.EqualsAndHashCode;
 public class CompanyInfo extends SimpleEntity {
     private String raisonSociale;
     private String adresse;
+    private String rc;
+    private String ice;
     
     @Lob
     private byte[] logo;

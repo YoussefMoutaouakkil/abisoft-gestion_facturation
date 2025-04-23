@@ -15,6 +15,8 @@ import javafx.scene.control.TextArea;
 import javafx.stage.FileChooser;
 import java.io.File;
 import java.io.IOException;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 
 @FXMLController
 public class CustomerController implements CrudController {
@@ -93,11 +95,53 @@ public class CustomerController implements CrudController {
     telField.setText(customer.getTel());
   }
 
+  private boolean isValidPhoneNumber(String phone) {
+    return phone != null && phone.matches("\\d{10}");
+  }
+
+  private boolean isValidEmail(String email) {
+    return email != null && email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$");
+  }
+
+  private void showError(String message) {
+    Alert alert = new Alert(AlertType.ERROR);
+    alert.setTitle("Erreur de validation");
+    alert.setHeaderText(null);
+    alert.setContentText(message);
+    alert.showAndWait();  // Use show() instead of showAndWait()
+  }
+
+  private boolean validateForm() {
+    String phoneNumber = telField.getText();
+    if (!isValidPhoneNumber(phoneNumber)) {
+      showError("Le numéro de téléphone doit contenir exactement 10 chiffres");
+      return false;
+    }
+
+    String email = textEmail.getText();
+    if (!isValidEmail(email)) {
+      showError("Format d'email invalide");
+      return false;
+    }
+
+    if (textName.getText().trim().isEmpty()) {
+      showError("Le nom est obligatoire");
+      return false;
+    }
+
+    return true;
+  }
+
   @Override
   public void save() {
+    if (!validateForm()) {
+      return;
+    }
+
     if (customer == null) {
       customer = new Customer();
     }
+
     customer.setType(comboType.getValue());
     customer.setName(textName.getText());
     customer.setAddress(textAddress.getText());
@@ -105,6 +149,11 @@ public class CustomerController implements CrudController {
     customer.setICE(textICE.getText());
     customer.setComment(commentField.getText());
     customer.setTel(telField.getText());
-    customerService.save(customer);
+    
+    try {
+      customerService.save(customer);
+    } catch (Exception e) {
+      showError("Erreur lors de l'enregistrement: " + e.getMessage());
+    }
   }
 }
