@@ -8,6 +8,6 @@ public interface CrudController{
 
 	public void render(SimpleEntity id);
 	
-	public void save();
+	public boolean save();
 	
 }

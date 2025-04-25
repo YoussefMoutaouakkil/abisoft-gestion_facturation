@@ -167,12 +167,13 @@ public class FactureController implements CrudController, Initializable {
 
     @FXML
     private void handleSave(ActionEvent event) {
-        save();
-        // Close the window
-        Node source = (Node) event.getSource();
-        Stage stage = (Stage) source.getScene().getWindow();
-        stage.close();
-    }
+        if (save()){            
+            // Close the window
+            Node source = (Node) event.getSource();
+            Stage stage = (Stage) source.getScene().getWindow();
+            stage.close();
+        }
+        }
 
     @FXML
     private void handleAdd() {
@@ -247,13 +248,43 @@ public class FactureController implements CrudController, Initializable {
         }
     }
 
+    private boolean validateForm() {
+        if (selectedClient == null) {
+            showError("Le client est obligatoire");
+            return false;
+        }
+
+        if (statusComboBox.getValue() == null) {
+            showError("Le statut est obligatoire");
+            return false;
+        }
+
+        if (dateFactureField.getValue() == null) {
+            showError("La date est obligatoire");
+            return false;
+        }
+
+        if (currentFacture.getProducts().isEmpty()) {
+            showError("Au moins un produit est requis");
+            return false;
+        }
+
+        return true;
+    }
+
     @Override
-    public void save() {
+    public boolean save() {
+        if (!validateForm()) {
+            return false;
+        }
+
         if (currentFacture != null) {
             updateFactureFromFields();
             factureRepository.save(currentFacture);
             clearFields();
+            return true;
         }
+        return false;
     }
 
     private void updateFields() {

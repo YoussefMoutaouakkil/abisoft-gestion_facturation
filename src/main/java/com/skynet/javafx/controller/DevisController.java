@@ -409,17 +409,46 @@ public class DevisController implements CrudController {
         }
     }
 
+    private boolean validateForm() {
+        if (selectedClient == null) {
+            showError("Le client est obligatoire");
+            return false;
+        }
+
+        if (statusComboBox.getValue() == null) {
+            showError("Le statut est obligatoire");
+            return false;
+        }
+
+        if (dateDevisField.getValue() == null) {
+            showError("La date est obligatoire");
+            return false;
+        }
+
+        if (currentDevis.getProducts().isEmpty()) {
+            showError("Au moins un produit est requis");
+            return false;
+        }
+
+        return true;
+    }
+
     @Override
-    public void save() {
-        if (validateInputs()) {
+    public boolean save() {
+        if (!validateForm()) {
+            return false;
+        }
+
+        if (currentDevis != null) {
             updateDevisFromInputs();
             devisService.save(currentDevis);
             // Update the displayed number after save
             numeroDevisField.setText(currentDevis.getNumeroDevis());
             // showSuccess("Devis enregistré avec succès");
             // close the form after saving
-
+            return true;
         }
+        return false;
     }
 
     private boolean validateInputs() {

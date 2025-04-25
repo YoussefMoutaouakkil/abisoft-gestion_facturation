@@ -33,8 +33,9 @@ public class ButtonBarController {
 	
 	private void acceptButtonHandleAction() {
 		Window stage = acceptButton.getScene().getWindow();
-		target.save();
-		stage.hide();
+		if(target.save()){
+			stage.hide();
+		}
 	}
 	
 	private void cancelButtonHandleAction() {

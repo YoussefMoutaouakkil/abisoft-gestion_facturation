@@ -87,7 +87,7 @@ public class MainController implements Initializable {
 				}
 			});
 			treeView.setOnMouseClicked((event) -> {
-				if (event.getClickCount() == 2) {
+				if (event.getClickCount() == 1) {
 					onSelectItemAction(treeView);
 				}
 			});

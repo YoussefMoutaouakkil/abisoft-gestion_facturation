@@ -62,6 +62,16 @@ public class CustomerController implements CrudController {
       textICE.setVisible(isEntreprise);
       labelICE.setVisible(isEntreprise);
     });
+
+    // Add phone number input validation
+    telField.textProperty().addListener((observable, oldValue, newValue) -> {
+      if (!newValue.matches("\\d*")) {
+        telField.setText(newValue.replaceAll("[^\\d]", ""));
+      }
+      if (newValue.length() > 10) {
+        telField.setText(oldValue);
+      }
+    });
   }
 
   @Override
@@ -96,11 +106,14 @@ public class CustomerController implements CrudController {
   }
 
   private boolean isValidPhoneNumber(String phone) {
-    return phone != null && phone.matches("\\d{10}");
+    // Only allow exactly 10 digits
+    return phone != null && !phone.trim().isEmpty() && phone.matches("^\\d{10}$");
   }
 
   private boolean isValidEmail(String email) {
-    return email != null && email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$");
+    // Basic email validation
+    return email != null && !email.trim().isEmpty() && 
+           email.matches("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$");
   }
 
   private void showError(String message) {
@@ -108,10 +121,20 @@ public class CustomerController implements CrudController {
     alert.setTitle("Erreur de validation");
     alert.setHeaderText(null);
     alert.setContentText(message);
-    alert.showAndWait();  // Use show() instead of showAndWait()
+    alert.showAndWait(); // Use show() instead of showAndWait()
   }
 
   private boolean validateForm() {
+    if (textName.getText().trim().isEmpty()) {
+      showError("Le nom est obligatoire");
+      return false;
+    }
+
+    if (textAddress.getText().trim().isEmpty()) {
+      showError("L'adresse est obligatoire");
+      return false;
+    }
+
     String phoneNumber = telField.getText();
     if (!isValidPhoneNumber(phoneNumber)) {
       showError("Le numéro de téléphone doit contenir exactement 10 chiffres");
@@ -124,8 +147,9 @@ public class CustomerController implements CrudController {
       return false;
     }
 
-    if (textName.getText().trim().isEmpty()) {
-      showError("Le nom est obligatoire");
+    // Check ICE only if type is Entreprise
+    if ("Entreprise".equals(comboType.getValue()) && textICE.getText().trim().isEmpty()) {
+      showError("L'ICE est obligatoire pour une entreprise");
       return false;
     }
 
@@ -133,27 +157,29 @@ public class CustomerController implements CrudController {
   }
 
   @Override
-  public void save() {
-    if (!validateForm()) {
-      return;
-    }
+  public boolean save() {
+    if (validateForm()) {
 
-    if (customer == null) {
-      customer = new Customer();
-    }
+      if (customer == null) {
+        customer = new Customer();
+      }
 
-    customer.setType(comboType.getValue());
-    customer.setName(textName.getText());
-    customer.setAddress(textAddress.getText());
-    customer.setEmail(textEmail.getText());
-    customer.setICE(textICE.getText());
-    customer.setComment(commentField.getText());
-    customer.setTel(telField.getText());
-    
-    try {
-      customerService.save(customer);
-    } catch (Exception e) {
-      showError("Erreur lors de l'enregistrement: " + e.getMessage());
+      customer.setType(comboType.getValue());
+      customer.setName(textName.getText());
+      customer.setAddress(textAddress.getText());
+      customer.setEmail(textEmail.getText());
+      customer.setICE(textICE.getText());
+      customer.setComment(commentField.getText());
+      customer.setTel(telField.getText());
+
+      try {
+        customerService.save(customer);
+      } catch (Exception e) {
+        showError("Erreur lors de l'enregistrement: " + e.getMessage());
+      }
+      return true;
     }
+    return false;
   }
+  
 }

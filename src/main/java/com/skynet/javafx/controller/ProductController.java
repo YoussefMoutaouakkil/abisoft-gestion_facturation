@@ -49,7 +49,7 @@ import javafx.scene.Node;
 @FXMLController
 public class ProductController implements CrudController, Initializable {
 
-  private static final Logger logger = LoggerFactory.getLogger(CustomerController.class);
+  private static final Logger logger = LoggerFactory.getLogger(ProductController.class);
 
   @FXML
   private TextField idColumn;
@@ -209,8 +209,42 @@ public class ProductController implements CrudController, Initializable {
     }
   }
 
+  private boolean validateForm() {
+    if (nameColumn.getText().trim().isEmpty()) {
+      showError("Le nom du produit est obligatoire");
+      return false;
+    }
+
+    if (priceColumn.getText().trim().isEmpty()) {
+      showError("Le prix est obligatoire");
+      return false;
+    }
+
+    try {
+      double price = Double.parseDouble(priceColumn.getText());
+      if (price < 0) {
+        showError("Le prix doit être positif");
+        return false;
+      }
+    } catch (NumberFormatException e) {
+      showError("Le prix doit être un nombre valide");
+      return false;
+    }
+
+    if (categoryComboBox.getValue() == null) {
+      showError("La catégorie est obligatoire");
+      return false;
+    }
+
+    return true;
+  }
+
   @Override
-  public void save() {
+  public boolean save() {
+    if (!validateForm()) {
+      return false;
+    }
+    
     try {
       if (product == null) {
         product = new Product();
@@ -231,9 +265,11 @@ public class ProductController implements CrudController, Initializable {
       // Close the window after saving
       Stage stage = (Stage) nameColumn.getScene().getWindow();
       stage.close();
+      return true;
       
     } catch (NumberFormatException e) {
       logger.error("Error parsing numeric values", e);
+      return false;
     }
   }
 

@@ -17,6 +17,7 @@ import com.skynet.javafx.service.ProductService;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Alert;
 
 @FXMLController
 public class CategoryController implements CrudController {
@@ -61,8 +62,28 @@ public class CategoryController implements CrudController {
     commentColumn.setText(category.getComment());
   }
 
+  private void showError(String message) {
+    Alert alert = new Alert(Alert.AlertType.ERROR);
+    alert.setTitle("Erreur de validation");
+    alert.setHeaderText(null);
+    alert.setContentText(message);
+    alert.showAndWait();
+  }
+
+  private boolean validateForm() {
+    if (nameColumn.getText().trim().isEmpty()) {
+      showError("Le nom de la catégorie est obligatoire");
+      return false;
+    }
+    return true;
+  }
+
   @Override
-  public void save() {
+  public boolean save() {
+    if (!validateForm()) {
+      return false;
+    }
+
     if (category == null) {
       category = new Category();
     }
@@ -70,5 +91,6 @@ public class CategoryController implements CrudController {
     category.setDescription(descriptionColumn.getText());
     category.setComment(commentColumn.getText());
     categoryService.save(category);
+    return true;
   }
 }

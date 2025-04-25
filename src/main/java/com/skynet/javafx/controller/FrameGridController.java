@@ -98,6 +98,12 @@ public class FrameGridController implements PrototypeController {
 		}
 		return false;
 	}
+	private boolean isExportablePage() {
+		if (frameService instanceof ExcelExportable) {
+			return true;
+		}
+		return false;
+	}
 
 	@FXML
 	private void initialize() {
@@ -187,6 +193,7 @@ public class FrameGridController implements PrototypeController {
 		this.frameService = frameService;
 		this.gridDef = gridDef;
 		printButton.setVisible(isPrintablePage()); // Show only for printable pages
+		exportButton.setVisible(isExportablePage()); // Show only for exportable pages
 		setupGrid();
 		loadData();
 	}
@@ -219,7 +226,7 @@ public class FrameGridController implements PrototypeController {
 			}
 		});
 		frameGrid.setOnMousePressed((event) -> {
-			if (event.isPrimaryButtonDown() && event.getClickCount() == 2) {
+			if (event.isPrimaryButtonDown() && event.getClickCount() == 1) {
 				editButtonHandleAction();
 			}
 		});
